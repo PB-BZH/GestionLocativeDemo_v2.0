@@ -1,0 +1,205 @@
+@page "/properties/new"
+@page "/properties/edit/{Id:int}"
+
+@using GestionLocativeDemo.Models
+@using GestionLocativeDemo.Services
+
+@inject DemoDataService DemoData
+@inject NavigationManager Navigation
+
+<PageTitle>@PageTitleText - Gestion Locative</PageTitle>
+
+<div class="property-edit-page">
+
+    <div class="page-header">
+
+        <div>
+            <h1>@PageTitleText</h1>
+
+            <p>
+                Renseignez les informations du bien immobilier.
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="form-card">
+
+        <div class="form-grid">
+
+            <div class="form-field">
+                <label>Type de bien</label>
+
+                <input @bind="_property.Type" />
+            </div>
+
+
+            <div class="form-field">
+                <label>Surface (m²)</label>
+
+                <input type="number"
+                       step="0.1"
+                       @bind="_property.Surface" />
+            </div>
+
+
+            <div class="form-field">
+                <label>Étage</label>
+
+                <input type="number"
+                       @bind="_property.Floor" />
+            </div>
+
+
+            <div class="form-field">
+                <label>Numéro de lot</label>
+
+                <input @bind="_property.LotNumber" />
+            </div>
+
+
+            <div class="form-field full-width">
+                <label>Adresse</label>
+
+                <input @bind="_property.Address" />
+            </div>
+
+
+            <div class="form-field">
+                <label>Code postal</label>
+
+                <input @bind="_property.PostalCode" />
+            </div>
+
+
+            <div class="form-field">
+                <label>Ville</label>
+
+                <input @bind="_property.City" />
+            </div>
+
+
+            <div class="form-field full-width">
+                <label>Identifiant fiscal</label>
+
+                <input @bind="_property.FiscalIdentifier" />
+            </div>
+
+
+            <div class="form-field">
+                <label>Loyer mensuel (€)</label>
+
+                <input type="number"
+                       step="0.01"
+                       @bind="_property.Rent" />
+            </div>
+
+
+            <div class="form-field">
+                <label>Charges mensuelles (€)</label>
+
+                <input type="number"
+                       step="0.01"
+                       @bind="_property.Charges" />
+            </div>
+
+
+            <div class="form-field checkbox-field">
+
+                <label>
+                    <input type="checkbox"
+                           @bind="_property.IsRented" />
+
+                    Bien actuellement loué
+                </label>
+
+            </div>
+
+        </div>
+
+
+        <div class="form-actions">
+
+            <button class="cancel-button"
+                    @onclick="Cancel">
+                Annuler
+            </button>
+
+            <button class="save-button"
+                    @onclick="Save">
+                Enregistrer
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@code {
+
+    [Parameter]
+    public int? Id { get; set; }
+
+    private Property _property = new();
+
+    private bool IsEditMode =>
+        Id.HasValue;
+
+    private string PageTitleText =>
+        IsEditMode
+            ? "Modifier le bien"
+            : "Ajouter un bien";
+
+
+    protected override void OnParametersSet() {
+
+        if (!Id.HasValue) {
+            _property = new Property();
+            return;
+        }
+
+        Property? existingProperty =
+            DemoData.GetProperty(Id.Value);
+
+        if (existingProperty == null) {
+            Navigation.NavigateTo("/properties");
+            return;
+        }
+
+        _property = new Property {
+            Id = existingProperty.Id,
+            Type = existingProperty.Type,
+            Surface = existingProperty.Surface,
+            Floor = existingProperty.Floor,
+            LotNumber = existingProperty.LotNumber,
+            Address = existingProperty.Address,
+            PostalCode = existingProperty.PostalCode,
+            City = existingProperty.City,
+            FiscalIdentifier = existingProperty.FiscalIdentifier,
+            Rent = existingProperty.Rent,
+            Charges = existingProperty.Charges,
+            IsRented = existingProperty.IsRented
+        };
+    }
+
+
+    private void Cancel() {
+        Navigation.NavigateTo("/properties");
+    }
+
+
+    private void Save() {
+
+        if (IsEditMode) {
+            DemoData.UpdateProperty(_property);
+        }
+        else {
+            DemoData.AddProperty(_property);
+        }
+
+        Navigation.NavigateTo("/properties");
+    }
+}

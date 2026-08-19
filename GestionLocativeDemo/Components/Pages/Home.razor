@@ -1,0 +1,341 @@
+@page "/"
+@using GestionLocativeDemo.Models
+@using GestionLocativeDemo.Services
+
+@inject DemoDataService DemoData
+@inject NavigationManager Navigation
+
+<PageTitle>Tableau de bord - Gestion Locative</PageTitle>
+
+<div class="dashboard">
+
+    <div class="dashboard-header">
+        <div>
+            <h1>Tableau de bord</h1>
+            <p>
+                Vue d'ensemble de votre gestion locative
+            </p>
+        </div>
+
+        <button class="primary-action" @onclick="AddProperty">
+            + Ajouter un bien
+        </button>
+    </div>
+
+
+    <!-- Indicateurs -->
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <div class="stat-label">
+                Loyers attendus
+            </div>
+
+            <div class="stat-value">
+                @ExpectedRent.ToString("N0") €
+            </div>
+
+            <div class="stat-detail">
+                Août 2026
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-label">
+                Loyers encaissés
+            </div>
+
+            <div class="stat-value">
+                @ReceivedRent.ToString("N0") €
+            </div>
+
+            <div class="stat-detail success">
+                @ReceivedPercentage.ToString("N0") % encaissés
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-label">
+                Reste à encaisser
+            </div>
+
+            <div class="stat-value">
+                @RemainingRent.ToString("N0") €
+            </div>
+
+            <div class="stat-detail warning">
+                1 échéance
+            </div>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-label">
+                Retards
+            </div>
+
+            <div class="stat-value">
+                @LateCount
+            </div>
+
+            <div class="stat-detail danger">
+                À traiter
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Partie inférieure -->
+
+    <div class="dashboard-grid">
+
+        <!-- Échéances -->
+
+        <section class="panel">
+
+            <div class="panel-header">
+                <div>
+                    <h2>Prochaines échéances</h2>
+                    <p>
+                        Paiements attendus prochainement
+                    </p>
+                </div>
+
+                <a href="rent-due">
+                    Voir tout
+                </a>
+            </div>
+
+
+            @foreach (RentDue rentDue in RentDues) {
+
+                Tenant? tenant =
+                    DemoData.GetTenant(rentDue.TenantId);
+
+                Property? property =
+                    DemoData.GetProperty(rentDue.PropertyId);
+
+                <div class="rent-row">
+
+                    <div class="tenant-avatar">
+                        @GetInitials(tenant)
+                    </div>
+
+                    <div class="rent-main">
+
+                        <div class="rent-name">
+                            @(tenant?.FullName ?? "Locataire inconnu")
+                        </div>
+
+                        <div class="rent-property">
+                            @(property?.Type ?? "Bien inconnu")
+                            ·
+                            @(property?.City ?? "")
+                        </div>
+
+                    </div>
+
+                    <div class="rent-date">
+                        @rentDue.DueDate.ToString("dd/MM/yyyy")
+                    </div>
+
+                    <div class="rent-amount">
+                        @rentDue.Total.ToString("N0") €
+                    </div>
+
+                    <span class="status @GetStatusCssClass(rentDue.Status)">
+                        @GetStatusText(rentDue.Status)
+                    </span>
+
+                </div>
+            }
+
+        </section>
+
+
+        <!-- Résumé patrimoine -->
+
+        <section class="panel">
+
+            <div class="panel-header">
+                <div>
+                    <h2>Patrimoine</h2>
+                    <p>
+                        Situation de vos biens
+                    </p>
+                </div>
+
+                <a href="properties">
+                    Voir les biens
+                </a>
+            </div>
+
+
+            <div class="property-summary">
+
+                <div>
+                    <span class="summary-number">
+                        @PropertyCount
+                    </span>
+
+                    <span class="summary-label">
+                        biens
+                    </span>
+                </div>
+
+                <div class="summary-divider"></div>
+
+                <div>
+                    <span class="summary-number">
+                        @RentedPropertyCount
+                    </span>
+
+                    <span class="summary-label">
+                        loués
+                    </span>
+                </div>
+
+                <div class="summary-divider"></div>
+
+                <div>
+                    <span class="summary-number">
+                        @OccupancyRate.ToString("N0") %
+                    </span>
+
+                    <span class="summary-label">
+                        occupation
+                    </span>
+                </div>
+
+            </div>
+
+
+            <div class="property-list">
+
+                @foreach (Property property in Properties) {
+
+                    <div class="property-line">
+
+                        <div>
+
+                            <strong>
+                                @property.Type
+                            </strong>
+
+                            <span>
+                                @property.City · @property.Surface.ToString("N0") m²
+                            </span>
+
+                        </div>
+
+                        <span class="property-rent">
+                            @((property.Rent + property.Charges).ToString("N0")) €/mois
+                        </span>
+
+                    </div>
+                }
+
+            </div>
+        </section>
+
+    </div>
+
+</div>
+
+@code {
+
+    private IReadOnlyList<Property> Properties =>
+        DemoData.Properties;
+
+    private IReadOnlyList<RentDue> RentDues =>
+        DemoData.RentDues;
+
+    private decimal ExpectedRent =>
+        RentDues.Sum(rentDue => rentDue.Total);
+
+    private decimal ReceivedRent =>
+        1650m;
+
+    private decimal RemainingRent =>
+        ExpectedRent - ReceivedRent;
+
+    private int LateCount =>
+        RentDues.Count(
+            rentDue =>
+                rentDue.Status == RentDueStatus.Late);
+
+    private string GetTenantName(int tenantId) =>
+        DemoData.GetTenant(tenantId)?.FullName
+        ?? "Locataire inconnu";
+
+    private Property? GetProperty(int propertyId) =>
+        DemoData.GetProperty(propertyId);
+
+    private decimal ReceivedPercentage =>
+        ExpectedRent == 0
+        ? 0
+        : ReceivedRent / ExpectedRent * 100;
+
+    private static string GetInitials(Tenant? tenant) {
+
+        if (tenant == null)
+            return "?";
+
+        string first =
+            string.IsNullOrWhiteSpace(tenant.FirstName)
+                ? ""
+                : tenant.FirstName[..1];
+
+        string last =
+            string.IsNullOrWhiteSpace(tenant.LastName)
+                ? ""
+                : tenant.LastName[..1];
+
+        return (first + last).ToUpperInvariant();
+    }
+
+    private static string GetStatusText(
+        RentDueStatus status) {
+
+        return status switch {
+            RentDueStatus.Upcoming => "À venir",
+            RentDueStatus.ToPay => "À payer",
+            RentDueStatus.Paid => "Payé",
+            RentDueStatus.Late => "En retard",
+            _ => ""
+        };
+    }
+
+    private static string GetStatusCssClass(
+        RentDueStatus status) {
+
+        return status switch {
+            RentDueStatus.Upcoming => "status-upcoming",
+            RentDueStatus.ToPay => "status-to-pay",
+            RentDueStatus.Paid => "status-paid",
+            RentDueStatus.Late => "status-late",
+            _ => ""
+        };
+    }
+
+    private int PropertyCount =>
+        Properties.Count;
+
+    private int RentedPropertyCount =>
+        Properties.Count(
+            property => property.IsRented);
+
+    private decimal OccupancyRate =>
+        PropertyCount == 0
+            ? 0
+            : (decimal)RentedPropertyCount
+              / PropertyCount
+              * 100;
+
+    private void AddProperty() {
+        Navigation.NavigateTo("/properties/new");
+    }
+}

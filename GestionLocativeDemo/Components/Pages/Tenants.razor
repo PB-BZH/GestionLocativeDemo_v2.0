@@ -1,0 +1,127 @@
+@page "/tenants"
+
+@using GestionLocativeDemo.Models
+@using GestionLocativeDemo.Services
+
+@inject DemoDataService DemoData
+@inject NavigationManager Navigation
+
+<PageTitle>Locataires - Gestion Locative</PageTitle>
+
+<div class="tenants-page">
+
+    <div class="page-header">
+
+        <div>
+            <h1>Locataires</h1>
+
+            <p>
+                Gérez les locataires associés à vos biens.
+            </p>
+        </div>
+
+        <button class="primary-action"
+                @onclick="AddTenant">
+            + Ajouter un locataire
+        </button>
+
+    </div>
+
+
+    <div class="tenants-summary">
+
+        <span class="summary-value">
+            @TenantList.Count
+        </span>
+
+        <span class="summary-label">
+            locataires enregistrés
+        </span>
+
+    </div>
+
+
+    <div class="tenants-list">
+
+        @foreach (Tenant tenant in TenantList) {
+
+            <article class="tenant-card">
+
+                <div class="tenant-avatar">
+                    @GetInitials(tenant)
+                </div>
+
+                <div class="tenant-main">
+
+                    <h2>
+                        @tenant.FullName
+                    </h2>
+
+                    <div class="tenant-address">
+                        @tenant.Address
+                    </div>
+
+                    <div class="tenant-contact">
+
+                        <span>
+                            @tenant.Email
+                        </span>
+
+                        <span>
+                            @tenant.Phone
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="tenant-actions">
+
+                    <button class="edit-button"
+                            @onclick="() => EditTenant(tenant.Id)">
+                        Modifier
+                    </button>
+
+                </div>
+
+            </article>
+        }
+
+    </div>
+
+</div>
+
+
+@code {
+
+    private IReadOnlyList<Tenant> TenantList =>
+        DemoData.Tenants;
+
+
+    private void AddTenant() {
+        Navigation.NavigateTo("/tenants/new");
+    }
+
+
+    private void EditTenant(int id) {
+        Navigation.NavigateTo(
+            $"/tenants/edit/{id}");
+    }
+
+
+    private static string GetInitials(
+        Tenant tenant) {
+
+        string first =
+            string.IsNullOrWhiteSpace(tenant.FirstName)
+                ? ""
+                : tenant.FirstName[..1];
+
+        string last =
+            string.IsNullOrWhiteSpace(tenant.LastName)
+                ? ""
+                : tenant.LastName[..1];
+
+        return (first + last).ToUpperInvariant();
+    }
+}

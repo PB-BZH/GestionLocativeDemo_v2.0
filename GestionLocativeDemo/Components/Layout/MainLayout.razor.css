@@ -1,0 +1,193 @@
+/* ==================================================
+   Structure générale
+   ================================================== */
+
+.app-shell {
+    display: flex;
+    min-height: 100vh;
+    background: #f4f6f8;
+    color: #1f2937;
+}
+
+
+/* ==================================================
+   Barre latérale
+   ================================================== */
+
+.sidebar {
+    width: 260px;
+    min-width: 260px;
+    min-height: 100vh;
+    background: #172033;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+}
+
+
+/* ==================================================
+   Partie principale
+   ================================================== */
+
+.main-area {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* ==================================================
+   Barre supérieure
+   ================================================== */
+
+.topbar {
+    min-height: 72px;
+    padding: 12px 32px;
+    background: #ffffff;
+    border-bottom: 1px solid #e1e5ea;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.topbar-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #172033;
+}
+
+.topbar-subtitle {
+    margin-top: 2px;
+    font-size: 0.82rem;
+    color: #7a8493;
+}
+
+
+/* ==================================================
+   Compte utilisateur
+   ================================================== */
+
+.account-area {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.account-link {
+    color: #344054;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+    .account-link:hover {
+        color: #175cd3;
+    }
+
+.logout-button,
+.register-button {
+    min-height: 36px;
+    padding: 0 15px;
+    border-radius: 6px;
+    font-size: 0.88rem;
+    cursor: pointer;
+}
+
+.logout-button {
+    border: 1px solid #d0d5dd;
+    background: #ffffff;
+    color: #344054;
+}
+
+    .logout-button:hover {
+        background: #f2f4f7;
+    }
+
+.register-button {
+    display: flex;
+    align-items: center;
+    background: #175cd3;
+    border: 1px solid #175cd3;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+    .register-button:hover {
+        background: #1849a9;
+        color: #ffffff;
+    }
+
+
+/* ==================================================
+   Contenu des pages
+   ================================================== */
+
+.page-content {
+    flex: 1;
+    width: 100%;
+    padding: 30px 34px;
+}
+
+
+/* ==================================================
+   Responsive
+   ================================================== */
+
+@media (max-width: 768px) {
+
+    .app-shell {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        min-width: 0;
+        min-height: auto;
+        position: static;
+    }
+
+    .topbar {
+        min-height: auto;
+        padding: 14px 18px;
+        position: static;
+        flex-wrap: wrap;
+    }
+
+    .page-content {
+        padding: 22px 18px;
+    }
+
+    .topbar-subtitle {
+        display: none;
+    }
+}
+
+
+/* ==================================================
+   Erreur Blazor
+   ================================================== */
+
+#blazor-error-ui {
+    color-scheme: light only;
+    background: lightyellow;
+    bottom: 0;
+    left: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    display: none;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+    #blazor-error-ui .dismiss {
+        cursor: pointer;
+        position: absolute;
+        right: 0.75rem;
+        top: 0.5rem;
+    }

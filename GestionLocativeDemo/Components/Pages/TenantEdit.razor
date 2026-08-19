@@ -1,0 +1,143 @@
+@page "/tenants/new"
+@page "/tenants/edit/{Id:int}"
+
+@using GestionLocativeDemo.Models
+@using GestionLocativeDemo.Services
+
+@inject DemoDataService DemoData
+@inject NavigationManager Navigation
+
+<PageTitle>@PageTitleText - Gestion Locative</PageTitle>
+
+<div class="tenant-edit-page">
+
+    <div class="page-header">
+
+        <h1>@PageTitleText</h1>
+
+        <p>
+            Renseignez les coordonnées du locataire.
+        </p>
+
+    </div>
+
+
+    <div class="form-card">
+
+        <div class="form-grid">
+
+            <div class="form-field">
+                <label>Prénom</label>
+
+                <input @bind="_tenant.FirstName" />
+            </div>
+
+
+            <div class="form-field">
+                <label>Nom</label>
+
+                <input @bind="_tenant.LastName" />
+            </div>
+
+
+            <div class="form-field full-width">
+                <label>Adresse</label>
+
+                <input @bind="_tenant.Address" />
+            </div>
+
+
+            <div class="form-field">
+                <label>E-mail</label>
+
+                <input type="email"
+                       @bind="_tenant.Email" />
+            </div>
+
+
+            <div class="form-field">
+                <label>Téléphone</label>
+
+                <input type="tel"
+                       @bind="_tenant.Phone" />
+            </div>
+
+        </div>
+
+
+        <div class="form-actions">
+
+            <button class="cancel-button"
+                    @onclick="Cancel">
+                Annuler
+            </button>
+
+            <button class="save-button"
+                    @onclick="Save">
+                Enregistrer
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@code {
+
+    [Parameter]
+    public int? Id { get; set; }
+
+    private Tenant _tenant = new();
+
+    private bool IsEditMode =>
+        Id.HasValue;
+
+    private string PageTitleText =>
+        IsEditMode
+            ? "Modifier le locataire"
+            : "Ajouter un locataire";
+
+
+    protected override void OnParametersSet() {
+
+        if (!Id.HasValue) {
+            _tenant = new Tenant();
+            return;
+        }
+
+        Tenant? existingTenant =
+            DemoData.GetTenant(Id.Value);
+
+        if (existingTenant == null) {
+            Navigation.NavigateTo("/tenants");
+            return;
+        }
+
+        _tenant = new Tenant {
+            Id = existingTenant.Id,
+            FirstName = existingTenant.FirstName,
+            LastName = existingTenant.LastName,
+            Address = existingTenant.Address,
+            Email = existingTenant.Email,
+            Phone = existingTenant.Phone
+        };
+    }
+
+
+    private void Save() {
+
+        if (IsEditMode)
+            DemoData.UpdateTenant(_tenant);
+        else
+            DemoData.AddTenant(_tenant);
+
+        Navigation.NavigateTo("/tenants");
+    }
+
+
+    private void Cancel() {
+        Navigation.NavigateTo("/tenants");
+    }
+}

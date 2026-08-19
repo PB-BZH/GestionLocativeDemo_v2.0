@@ -1,0 +1,368 @@
+.dashboard {
+    max-width: 1500px;
+    margin: 0 auto;
+}
+
+
+/* ==================================================
+   En-tête
+   ================================================== */
+
+.dashboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+    .dashboard-header h1 {
+        margin: 0;
+        font-size: 1.7rem;
+        font-weight: 650;
+        color: #172033;
+    }
+
+    .dashboard-header p {
+        margin: 5px 0 0;
+        color: #667085;
+        font-size: 0.92rem;
+    }
+
+.primary-action {
+    min-height: 40px;
+    padding: 0 18px;
+    border: none;
+    border-radius: 7px;
+    background: #175cd3;
+    color: white;
+    font: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+    .primary-action:hover {
+        background: #1849a9;
+    }
+
+
+/* ==================================================
+   Cartes indicateurs
+   ================================================== */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    padding: 20px;
+    background: #ffffff;
+    border: 1px solid #e1e5ea;
+    border-radius: 9px;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+.stat-label {
+    color: #667085;
+    font-size: 0.84rem;
+}
+
+.stat-value {
+    margin-top: 8px;
+    color: #172033;
+    font-size: 1.7rem;
+    font-weight: 650;
+}
+
+.stat-detail {
+    margin-top: 7px;
+    color: #667085;
+    font-size: 0.78rem;
+}
+
+    .stat-detail.success {
+        color: #067647;
+    }
+
+    .stat-detail.warning {
+        color: #b54708;
+    }
+
+    .stat-detail.danger {
+        color: #b42318;
+    }
+
+
+/* ==================================================
+   Zone inférieure
+   ================================================== */
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(340px, 1fr);
+    gap: 22px;
+    align-items: start;
+}
+
+
+/* ==================================================
+   Panels
+   ================================================== */
+
+.panel {
+    background: #ffffff;
+    border: 1px solid #e1e5ea;
+    border-radius: 9px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+.panel-header {
+    min-height: 76px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    border-bottom: 1px solid #eaecf0;
+}
+
+    .panel-header h2 {
+        margin: 0;
+        color: #172033;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .panel-header p {
+        margin: 3px 0 0;
+        color: #7a8493;
+        font-size: 0.78rem;
+    }
+
+    .panel-header a {
+        color: #175cd3;
+        text-decoration: none;
+        font-size: 0.82rem;
+        font-weight: 500;
+    }
+
+        .panel-header a:hover {
+            text-decoration: underline;
+        }
+
+
+/* ==================================================
+   Échéances
+   ================================================== */
+
+.rent-row {
+    min-height: 72px;
+    padding: 12px 20px;
+    display: grid;
+    grid-template-columns: 40px minmax(150px, 1fr) 95px 80px 85px;
+    gap: 12px;
+    align-items: center;
+    border-bottom: 1px solid #f0f1f3;
+}
+
+    .rent-row:last-child {
+        border-bottom: none;
+    }
+
+.tenant-avatar {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #eaf2ff;
+    color: #175cd3;
+    font-size: 0.75rem;
+    font-weight: 650;
+}
+
+.rent-name {
+    color: #344054;
+    font-size: 0.86rem;
+    font-weight: 550;
+}
+
+.rent-property {
+    margin-top: 2px;
+    color: #8a94a3;
+    font-size: 0.75rem;
+}
+
+.rent-date,
+.rent-amount {
+    color: #475467;
+    font-size: 0.8rem;
+}
+
+.rent-amount {
+    font-weight: 600;
+}
+
+.status {
+    display: inline-flex;
+    justify-content: center;
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 550;
+}
+
+.status-upcoming {
+    background: #eef4ff;
+    color: #3538cd;
+}
+
+.status-late {
+    background: #fef3f2;
+    color: #b42318;
+}
+
+
+/* ==================================================
+   Résumé patrimoine
+   ================================================== */
+
+.property-summary {
+    padding: 22px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 10px;
+    border-bottom: 1px solid #eaecf0;
+}
+
+    .property-summary > div:not(.summary-divider) {
+        text-align: center;
+    }
+
+.summary-number {
+    display: block;
+    color: #172033;
+    font-size: 1.3rem;
+    font-weight: 650;
+}
+
+.summary-label {
+    display: block;
+    margin-top: 2px;
+    color: #7a8493;
+    font-size: 0.73rem;
+}
+
+.summary-divider {
+    width: 1px;
+    height: 36px;
+    background: #eaecf0;
+}
+
+
+/* ==================================================
+   Liste des biens
+   ================================================== */
+
+.property-line {
+    min-height: 65px;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    border-bottom: 1px solid #f0f1f3;
+}
+
+    .property-line:last-child {
+        border-bottom: none;
+    }
+
+    .property-line strong {
+        display: block;
+        color: #344054;
+        font-size: 0.84rem;
+    }
+
+    .property-line span {
+        display: block;
+        margin-top: 3px;
+        color: #8a94a3;
+        font-size: 0.74rem;
+    }
+
+    .property-line .property-rent {
+        color: #344054;
+        font-size: 0.8rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+
+/* ==================================================
+   Responsive tablette
+   ================================================== */
+
+@media (max-width: 1100px) {
+
+    .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.status-to-pay {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+.status-paid {
+    background: #ecfdf3;
+    color: #067647;
+}
+
+/* ==================================================
+   Responsive smartphone
+   ================================================== */
+
+@media (max-width: 650px) {
+
+    .dashboard-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .primary-action {
+        width: 100%;
+    }
+
+    .rent-row {
+        grid-template-columns: 40px minmax(0, 1fr) auto;
+    }
+
+    .rent-date {
+        display: none;
+    }
+
+    .rent-amount {
+        grid-column: 2;
+    }
+
+    .status {
+        grid-column: 3;
+        grid-row: 1 / span 2;
+    }
+}

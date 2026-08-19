@@ -1,0 +1,271 @@
+.properties-page {
+    max-width: 1500px;
+    margin: 0 auto;
+}
+
+
+/* ==================================================
+   En-tête
+   ================================================== */
+
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+    .page-header h1 {
+        margin: 0;
+        color: #172033;
+        font-size: 1.7rem;
+        font-weight: 650;
+    }
+
+    .page-header p {
+        margin: 5px 0 0;
+        color: #667085;
+        font-size: 0.92rem;
+    }
+
+.primary-action {
+    min-height: 40px;
+    padding: 0 18px;
+    border: none;
+    border-radius: 7px;
+    background: #175cd3;
+    color: #ffffff;
+    font: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+    .primary-action:hover {
+        background: #1849a9;
+    }
+
+
+/* ==================================================
+   Résumé
+   ================================================== */
+
+.properties-summary {
+    margin-bottom: 22px;
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    gap: 55px;
+    background: #ffffff;
+    border: 1px solid #e1e5ea;
+    border-radius: 9px;
+}
+
+    .properties-summary > div {
+        display: flex;
+        align-items: baseline;
+        gap: 7px;
+    }
+
+.summary-value {
+    color: #172033;
+    font-size: 1.25rem;
+    font-weight: 650;
+}
+
+.summary-label {
+    color: #7a8493;
+    font-size: 0.8rem;
+}
+
+
+/* ==================================================
+   Liste
+   ================================================== */
+
+.properties-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.property-card {
+    min-height: 150px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 190px;
+    background: #ffffff;
+    border: 1px solid #e1e5ea;
+    border-radius: 9px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+
+/* ==================================================
+   Partie descriptive
+   ================================================== */
+
+.property-main {
+    padding: 20px 22px;
+}
+
+.property-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 22px;
+}
+
+    .property-heading h2 {
+        margin: 0;
+        color: #172033;
+        font-size: 1rem;
+        font-weight: 650;
+    }
+
+.property-address {
+    margin-top: 4px;
+    color: #7a8493;
+    font-size: 0.8rem;
+}
+
+
+/* ==================================================
+   Statut
+   ================================================== */
+
+.status {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 550;
+    white-space: nowrap;
+}
+
+.status-rented {
+    background: #ecfdf3;
+    color: #067647;
+}
+
+.status-free {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+
+/* ==================================================
+   Caractéristiques
+   ================================================== */
+
+.property-details {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(100px, 1fr));
+    gap: 20px;
+}
+
+.detail-label {
+    display: block;
+    margin-bottom: 4px;
+    color: #8a94a3;
+    font-size: 0.72rem;
+}
+
+.detail-value {
+    display: block;
+    color: #344054;
+    font-size: 0.84rem;
+    font-weight: 550;
+}
+
+
+/* ==================================================
+   Partie financière
+   ================================================== */
+
+.property-financial {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-left: 1px solid #eaecf0;
+    background: #fafbfc;
+}
+
+.rent-label {
+    color: #7a8493;
+    font-size: 0.74rem;
+}
+
+.rent-value {
+    margin-top: 3px;
+    color: #172033;
+    font-size: 1.25rem;
+    font-weight: 650;
+}
+
+.charges {
+    margin-top: 2px;
+    color: #7a8493;
+    font-size: 0.75rem;
+}
+
+.edit-button {
+    min-height: 34px;
+    margin-top: 16px;
+    border: 1px solid #d0d5dd;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #344054;
+    font: inherit;
+    font-size: 0.82rem;
+    cursor: pointer;
+}
+
+    .edit-button:hover {
+        background: #f2f4f7;
+    }
+
+
+/* ==================================================
+   Responsive
+   ================================================== */
+
+@media (max-width: 900px) {
+
+    .property-details {
+        grid-template-columns: repeat(2, minmax(100px, 1fr));
+    }
+}
+
+
+@media (max-width: 650px) {
+
+    .page-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .primary-action {
+        width: 100%;
+    }
+
+    .properties-summary {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .property-card {
+        grid-template-columns: 1fr;
+    }
+
+    .property-financial {
+        border-left: none;
+        border-top: 1px solid #eaecf0;
+    }
+
+    .property-details {
+        grid-template-columns: 1fr 1fr;
+    }
+}

@@ -1,0 +1,197 @@
+@page "/properties"
+
+@using GestionLocativeDemo.Models
+@using GestionLocativeDemo.Services
+
+@inject DemoDataService DemoData
+@inject NavigationManager Navigation
+
+<PageTitle>Biens - Gestion Locative</PageTitle>
+
+<div class="properties-page">
+
+    <div class="page-header">
+
+        <div>
+            <h1>Biens immobiliers</h1>
+
+            <p>
+                Gérez les biens composant votre patrimoine locatif.
+            </p>
+        </div>
+
+        <button 
+            class="primary-action" 
+            @onclick="AddProperty">
+            + Ajouter un bien
+        </button>
+
+    </div>
+
+
+    <div class="properties-summary">
+
+        <div>
+            <span class="summary-value">
+                @RentalProperties.Count
+            </span>
+
+            <span class="summary-label">
+                biens
+            </span>
+        </div>
+
+        <div>
+            <span class="summary-value">
+                @RentedCount
+            </span>
+
+            <span class="summary-label">
+                loués
+            </span>
+        </div>
+
+        <div>
+            <span class="summary-value">
+                @MonthlyIncome.ToString("N0") €
+            </span>
+
+            <span class="summary-label">
+                loyers + charges / mois
+            </span>
+        </div>
+
+    </div>
+
+
+    <div class="properties-list">
+
+        @foreach (Property property in RentalProperties) {
+
+            <article class="property-card">
+
+                <div class="property-main">
+
+                    <div class="property-heading">
+
+                        <div>
+                            <h2>@property.Type</h2>
+
+                            <div class="property-address">
+                                @property.Address,
+                                @property.PostalCode
+                                @property.City
+                            </div>
+                        </div>
+
+                        <span class="status @(property.IsRented ? "status-rented" : "status-free")">
+                            @(property.IsRented ? "Loué" : "Libre")
+                        </span>
+
+                    </div>
+
+
+                    <div class="property-details">
+
+                        <div>
+                            <span class="detail-label">
+                                Surface
+                            </span>
+
+                            <span class="detail-value">
+                                @property.Surface.ToString("N0") m²
+                            </span>
+                        </div>
+
+
+                        <div>
+                            <span class="detail-label">
+                                Étage
+                            </span>
+
+                            <span class="detail-value">
+                                @(property.Floor?.ToString() ?? "—")
+                            </span>
+                        </div>
+
+
+                        <div>
+                            <span class="detail-label">
+                                Lot
+                            </span>
+
+                            <span class="detail-value">
+                                @(string.IsNullOrWhiteSpace(property.LotNumber)
+                                    ? "—"
+                                    : property.LotNumber)
+                            </span>
+                        </div>
+
+
+                        <div>
+                            <span class="detail-label">
+                                Identifiant fiscal
+                            </span>
+
+                            <span class="detail-value">
+                                @(string.IsNullOrWhiteSpace(property.FiscalIdentifier)
+                                    ? "—"
+                                    : property.FiscalIdentifier)
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="property-financial">
+
+                    <div class="rent-label">
+                        Loyer mensuel
+                    </div>
+
+                    <div class="rent-value">
+                        @property.Rent.ToString("N0") €
+                    </div>
+
+                    <div class="charges">
+                        + @property.Charges.ToString("N0") € charges
+                    </div>
+
+                    <button class="edit-button" @onclick="() => EditProperty(property.Id)">
+                        Modifier
+                    </button>
+
+                </div>
+
+            </article>
+        }
+
+    </div>
+
+</div>
+
+
+@code {
+
+    private IReadOnlyList<Property> RentalProperties =>
+        DemoData.Properties;
+
+    private int RentedCount =>
+        RentalProperties.Count(property => property.IsRented);
+
+    private decimal MonthlyIncome =>
+        RentalProperties.Sum(
+            property =>
+                property.Rent + property.Charges);
+
+    private void AddProperty() {
+        Navigation.NavigateTo("/properties/new");
+    }
+
+    private void EditProperty(int id) {
+        Navigation.NavigateTo(
+            $"/properties/edit/{id}");
+    }
+}

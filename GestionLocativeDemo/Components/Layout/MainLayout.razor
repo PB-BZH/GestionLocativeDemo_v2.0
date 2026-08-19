@@ -1,0 +1,95 @@
+@inherits LayoutComponentBase
+
+<div class="app-shell">
+
+    <aside class="sidebar">
+        <NavMenu />
+    </aside>
+
+    <section class="main-area">
+
+        <header class="topbar">
+
+            <div>
+                <div class="topbar-title">
+                    Espace propriétaire
+                </div>
+
+                <div class="topbar-subtitle">
+                    Gestion de votre patrimoine locatif
+                </div>
+            </div>
+
+            <div class="account-area">
+
+                <AuthorizeView>
+
+                    <Authorized>
+
+                        <a class="account-link"
+                           href="Account/Manage">
+                            @context.User.Identity?.Name
+                        </a>
+
+                        <form action="Account/Logout"
+                              method="post">
+
+                            <AntiforgeryToken />
+
+                            <input type="hidden"
+                                   name="ReturnUrl"
+                                   value="/" />
+
+                            <button type="submit"
+                                    class="logout-button">
+                                Déconnexion
+                            </button>
+
+                        </form>
+
+                    </Authorized>
+
+                    <NotAuthorized>
+
+                        <a class="account-link"
+                           href="Account/Login">
+                            Connexion
+                        </a>
+
+                        <a class="register-button"
+                           href="Account/Register">
+                            Créer un compte
+                        </a>
+
+                    </NotAuthorized>
+
+                </AuthorizeView>
+
+            </div>
+
+        </header>
+
+        <main class="page-content">
+            @Body
+        </main>
+
+    </section>
+
+</div>
+
+
+<div id="blazor-error-ui"
+     data-nosnippet>
+
+    Une erreur est survenue.
+
+    <a href="."
+       class="reload">
+        Recharger
+    </a>
+
+    <span class="dismiss">
+        🗙
+    </span>
+
+</div>

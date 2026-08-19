@@ -1,0 +1,214 @@
+# ============================================================
+# LicenseGeneratorBlazor
+# .NET 10 / Blazor / Visual Studio
+# ============================================================
+
+
+# ------------------------------------------------------------
+# Visual Studio
+# ------------------------------------------------------------
+
+.vs/
+.vscode/
+
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio cache / generated files
+*.VC.db
+*.VC.opendb
+*.opendb
+*.cache
+
+
+# ------------------------------------------------------------
+# .NET build results
+# ------------------------------------------------------------
+
+[Bb]in/
+[Oo]bj/
+
+[Dd]ebug/
+[Rr]elease/
+
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+
+artifacts/
+
+
+# ------------------------------------------------------------
+# Publish output
+# ------------------------------------------------------------
+
+publish/
+Publish/
+*.publish.xml
+*.pubxml.user
+
+
+# ------------------------------------------------------------
+# NuGet
+# ------------------------------------------------------------
+
+*.nupkg
+*.snupkg
+
+packages/
+
+# NuGet restore files generated locally
+.nuget/
+
+
+# ------------------------------------------------------------
+# Test results / code coverage
+# ------------------------------------------------------------
+
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+coverage/
+coverage.*
+
+
+# ------------------------------------------------------------
+# Logs
+# ------------------------------------------------------------
+
+*.log
+logs/
+Logs/
+
+
+# ------------------------------------------------------------
+# Temporary files
+# ------------------------------------------------------------
+
+*.tmp
+*.temp
+*.bak
+*.old
+*.orig
+*.swp
+*.swo
+*~
+~$*
+
+
+# ------------------------------------------------------------
+# Operating system files
+# ------------------------------------------------------------
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+
+
+# ------------------------------------------------------------
+# ASP.NET / Blazor local configuration
+# ------------------------------------------------------------
+
+# Configuration locale personnelle
+appsettings.Local.json
+appsettings.*.local.json
+
+# User Secrets are normally stored outside the project,
+# but exclude any accidentally-created local secrets directory.
+secrets/
+Secrets/
+
+
+# ------------------------------------------------------------
+# HTTPS development certificates
+# ------------------------------------------------------------
+
+*.pfx
+*.p12
+*.pem
+*.cer
+*.crt
+*.key
+
+
+# ------------------------------------------------------------
+# License Generator - SECURITY
+# ------------------------------------------------------------
+
+# Private/public key material
+PrivateKeys/
+private-keys/
+privatekeys/
+Keys/
+keys/
+
+*.privatekey
+*.private.key
+
+# Generated licenses
+Licenses/
+licenses/
+
+*.license
+*.lic
+
+# Local/generated profiles if they can contain sensitive data
+Profiles/Local/
+profiles/local/
+
+
+# ------------------------------------------------------------
+# Environment files
+# ------------------------------------------------------------
+
+.env
+.env.*
+!.env.example
+
+
+# ------------------------------------------------------------
+# Front-end tools (if added later)
+# ------------------------------------------------------------
+
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+
+# ------------------------------------------------------------
+# JetBrains IDEs (PhpStorm / Rider)
+# ------------------------------------------------------------
+
+.idea/
+*.sln.iml
+
+
+# ------------------------------------------------------------
+# ReSharper
+# ------------------------------------------------------------
+
+_ReSharper*/
+*.ReSharper.user
+*.DotSettings.user
+
+
+# ------------------------------------------------------------
+# BenchmarkDotNet
+# ------------------------------------------------------------
+
+BenchmarkDotNet.Artifacts/
+
+# Données générées par License Generator
+Data/Profiles/*

@@ -1,0 +1,181 @@
+.tenants-page {
+    max-width: 1500px;
+    margin: 0 auto;
+}
+
+
+/* ==================================================
+   En-tête
+   ================================================== */
+
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+    .page-header h1 {
+        margin: 0;
+        color: #172033;
+        font-size: 1.7rem;
+        font-weight: 650;
+    }
+
+    .page-header p {
+        margin: 5px 0 0;
+        color: #667085;
+        font-size: 0.92rem;
+    }
+
+.primary-action {
+    min-height: 40px;
+    padding: 0 18px;
+    border: none;
+    border-radius: 7px;
+    background: #175cd3;
+    color: white;
+    font: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+    .primary-action:hover {
+        background: #1849a9;
+    }
+
+
+/* ==================================================
+   Résumé
+   ================================================== */
+
+.tenants-summary {
+    margin-bottom: 22px;
+    padding: 18px 22px;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    background: #ffffff;
+    border: 1px solid #e1e5ea;
+    border-radius: 9px;
+}
+
+.summary-value {
+    color: #172033;
+    font-size: 1.25rem;
+    font-weight: 650;
+}
+
+.summary-label {
+    color: #7a8493;
+    font-size: 0.8rem;
+}
+
+
+/* ==================================================
+   Liste
+   ================================================== */
+
+.tenants-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.tenant-card {
+    min-height: 105px;
+    padding: 18px 20px;
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr) auto;
+    gap: 16px;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #e1e5ea;
+    border-radius: 9px;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+.tenant-avatar {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #eaf2ff;
+    color: #175cd3;
+    font-size: 0.8rem;
+    font-weight: 650;
+}
+
+.tenant-main h2 {
+    margin: 0;
+    color: #172033;
+    font-size: 1rem;
+    font-weight: 650;
+}
+
+.tenant-address {
+    margin-top: 4px;
+    color: #667085;
+    font-size: 0.8rem;
+}
+
+.tenant-contact {
+    margin-top: 10px;
+    display: flex;
+    gap: 24px;
+    color: #7a8493;
+    font-size: 0.78rem;
+}
+
+.edit-button {
+    min-width: 110px;
+    min-height: 36px;
+    border: 1px solid #d0d5dd;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #344054;
+    font: inherit;
+    font-size: 0.82rem;
+    cursor: pointer;
+}
+
+    .edit-button:hover {
+        background: #f2f4f7;
+    }
+
+
+/* ==================================================
+   Responsive
+   ================================================== */
+
+@media (max-width: 650px) {
+
+    .page-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .primary-action {
+        width: 100%;
+    }
+
+    .tenant-card {
+        grid-template-columns: 48px minmax(0, 1fr);
+    }
+
+    .tenant-actions {
+        grid-column: 1 / -1;
+    }
+
+    .edit-button {
+        width: 100%;
+    }
+
+    .tenant-contact {
+        flex-direction: column;
+        gap: 4px;
+    }
+}

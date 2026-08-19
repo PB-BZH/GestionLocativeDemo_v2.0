@@ -14,6 +14,42 @@ public sealed class DemoDataService {
     _dbFactory = dbFactory;
   }
 
+  public async Task SeedTenantsAsync() {
+
+    await using ApplicationDbContext db =
+        await _dbFactory.CreateDbContextAsync();
+
+    if (await db.Tenants.AnyAsync())
+      return;
+
+    db.Tenants.AddRange(
+        new Tenant {
+          FirstName = "Marie",
+          LastName = "Dupont",
+          Address = "12 rue de la République, 35000 Rennes",
+          Email = "marie.dupont@example.fr",
+          Phone = "06 10 20 30 40"
+        },
+
+        new Tenant {
+          FirstName = "Julien",
+          LastName = "Leroy",
+          Address = "8 avenue Victor-Hugo, 44000 Nantes",
+          Email = "julien.leroy@example.fr",
+          Phone = "06 20 30 40 50"
+        },
+
+        new Tenant {
+          FirstName = "Sophie",
+          LastName = "Bernard",
+          Address = "24 rue du Port, 56000 Vannes",
+          Email = "sophie.bernard@example.fr",
+          Phone = "06 30 40 50 60"
+        });
+
+    await db.SaveChangesAsync();
+  }
+
   public async Task SeedPropertiesAsync() {
 
     await using ApplicationDbContext db =
@@ -245,6 +281,63 @@ public sealed class DemoDataService {
     existingProperty.Rent = property.Rent;
     existingProperty.Charges = property.Charges;
     existingProperty.IsRented = property.IsRented;
+
+    await db.SaveChangesAsync();
+
+    return true;
+  }
+
+  public async Task<List<Tenant>> GetTenantsAsync() {
+
+    await using ApplicationDbContext db =
+        await _dbFactory.CreateDbContextAsync();
+
+    return await db.Tenants
+        .AsNoTracking()
+        .OrderBy(tenant => tenant.Id)
+        .ToListAsync();
+  }
+
+
+  public async Task<Tenant?> GetTenantAsync(int id) {
+
+    await using ApplicationDbContext db =
+        await _dbFactory.CreateDbContextAsync();
+
+    return await db.Tenants
+        .AsNoTracking()
+        .FirstOrDefaultAsync(tenant => tenant.Id == id);
+  }
+
+
+  public async Task AddTenantAsync(Tenant tenant) {
+
+    await using ApplicationDbContext db =
+        await _dbFactory.CreateDbContextAsync();
+
+    db.Tenants.Add(tenant);
+
+    await db.SaveChangesAsync();
+  }
+
+
+  public async Task<bool> UpdateTenantAsync(Tenant tenant) {
+
+    await using ApplicationDbContext db =
+        await _dbFactory.CreateDbContextAsync();
+
+    Tenant? existingTenant =
+        await db.Tenants
+            .FirstOrDefaultAsync(t => t.Id == tenant.Id);
+
+    if (existingTenant == null)
+      return false;
+
+    existingTenant.FirstName = tenant.FirstName;
+    existingTenant.LastName = tenant.LastName;
+    existingTenant.Address = tenant.Address;
+    existingTenant.Email = tenant.Email;
+    existingTenant.Phone = tenant.Phone;
 
     await db.SaveChangesAsync();
 

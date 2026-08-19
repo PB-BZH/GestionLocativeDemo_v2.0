@@ -100,7 +100,7 @@
             : "Ajouter un locataire";
 
 
-    protected override void OnParametersSet() {
+    protected override async Task OnParametersSetAsync() {
 
         if (!Id.HasValue) {
             _tenant = new Tenant();
@@ -108,7 +108,7 @@
         }
 
         Tenant? existingTenant =
-            DemoData.GetTenant(Id.Value);
+            await DemoData.GetTenantAsync(Id.Value);
 
         if (existingTenant == null) {
             Navigation.NavigateTo("/tenants");
@@ -126,16 +126,15 @@
     }
 
 
-    private void Save() {
+    private async Task Save() {
 
         if (IsEditMode)
-            DemoData.UpdateTenant(_tenant);
+            await DemoData.UpdateTenantAsync(_tenant);
         else
-            DemoData.AddTenant(_tenant);
+            await DemoData.AddTenantAsync(_tenant);
 
         Navigation.NavigateTo("/tenants");
     }
-
 
     private void Cancel() {
         Navigation.NavigateTo("/tenants");

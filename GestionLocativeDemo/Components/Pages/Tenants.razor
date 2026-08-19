@@ -21,7 +21,7 @@
         </div>
 
         <button class="primary-action"
-                @onclick="AddTenant">
+                @onclick="NavigateToAddTenant">
             + Ajouter un locataire
         </button>
 
@@ -94,11 +94,15 @@
 
 @code {
 
-    private IReadOnlyList<Tenant> TenantList =>
-        DemoData.Tenants;
+    private List<Tenant> TenantList = [];
 
+    protected override async Task OnInitializedAsync() {
 
-    private void AddTenant() {
+        TenantList =
+            await DemoData.GetTenantsAsync();
+    }
+
+    private void NavigateToAddTenant() {
         Navigation.NavigateTo("/tenants/new");
     }
 

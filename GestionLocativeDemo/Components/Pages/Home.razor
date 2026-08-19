@@ -113,7 +113,8 @@
             @foreach (RentDue rentDue in RentDues) {
 
                 Tenant? tenant =
-                    DemoData.GetTenant(rentDue.TenantId);
+                    Tenants.FirstOrDefault(
+                        tenant => tenant.Id == rentDue.TenantId);
 
                 Property? property =
                     Properties.FirstOrDefault(
@@ -249,6 +250,7 @@
 @code {
 
     private List<Property> Properties = [];
+    private List<Tenant> Tenants = [];
 
     private IReadOnlyList<RentDue> RentDues =>
         DemoData.RentDues;
@@ -257,6 +259,8 @@
 
         Properties =
             await DemoData.GetPropertiesAsync();
+        Tenants =
+            await DemoData.GetTenantsAsync();
     }
 
     private decimal ExpectedRent =>

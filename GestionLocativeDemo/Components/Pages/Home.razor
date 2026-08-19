@@ -17,7 +17,7 @@
             </p>
         </div>
 
-        <button class="primary-action" @onclick="AddProperty">
+        <button class="primary-action" @onclick="NavigateToAddProperty">
             + Ajouter un bien
         </button>
     </div>
@@ -116,7 +116,8 @@
                     DemoData.GetTenant(rentDue.TenantId);
 
                 Property? property =
-                    DemoData.GetProperty(rentDue.PropertyId);
+                    Properties.FirstOrDefault(
+                        property => property.Id == rentDue.PropertyId);
 
                 <div class="rent-row">
 
@@ -247,11 +248,16 @@
 
 @code {
 
-    private IReadOnlyList<Property> Properties =>
-        DemoData.Properties;
+    private List<Property> Properties = [];
 
     private IReadOnlyList<RentDue> RentDues =>
         DemoData.RentDues;
+
+    protected override async Task OnInitializedAsync() {
+
+        Properties =
+            await DemoData.GetPropertiesAsync();
+    }
 
     private decimal ExpectedRent =>
         RentDues.Sum(rentDue => rentDue.Total);
@@ -266,13 +272,6 @@
         RentDues.Count(
             rentDue =>
                 rentDue.Status == RentDueStatus.Late);
-
-    private string GetTenantName(int tenantId) =>
-        DemoData.GetTenant(tenantId)?.FullName
-        ?? "Locataire inconnu";
-
-    private Property? GetProperty(int propertyId) =>
-        DemoData.GetProperty(propertyId);
 
     private decimal ReceivedPercentage =>
         ExpectedRent == 0
@@ -335,7 +334,7 @@
               / PropertyCount
               * 100;
 
-    private void AddProperty() {
+    private void NavigateToAddProperty() {
         Navigation.NavigateTo("/properties/new");
     }
 }

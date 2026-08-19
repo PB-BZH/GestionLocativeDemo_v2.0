@@ -20,9 +20,8 @@
             </p>
         </div>
 
-        <button 
-            class="primary-action" 
-            @onclick="AddProperty">
+        <button class="primary-action"
+                @onclick="NavigateToAddProperty">
             + Ajouter un bien
         </button>
 
@@ -175,8 +174,13 @@
 
 @code {
 
-    private IReadOnlyList<Property> RentalProperties =>
-        DemoData.Properties;
+    private List<Property> RentalProperties = [];
+
+    protected override async Task OnInitializedAsync() {
+
+        RentalProperties =
+            await DemoData.GetPropertiesAsync();
+    }
 
     private int RentedCount =>
         RentalProperties.Count(property => property.IsRented);
@@ -186,7 +190,7 @@
             property =>
                 property.Rent + property.Charges);
 
-    private void AddProperty() {
+    private void NavigateToAddProperty() {
         Navigation.NavigateTo("/properties/new");
     }
 

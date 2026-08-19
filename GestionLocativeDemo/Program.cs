@@ -23,7 +23,7 @@ builder.Services.AddAuthentication(options => {
     .AddIdentityCookies();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -39,6 +39,14 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>,IdentityNoOpEmailSen
 builder.Services.AddScoped<DemoDataService>();
 
 var app = builder.Build();
+
+using (IServiceScope scope = app.Services.CreateScope()) {
+
+  DemoDataService demoData =
+      scope.ServiceProvider.GetRequiredService<DemoDataService>();
+
+  await demoData.SeedPropertiesAsync();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()) {

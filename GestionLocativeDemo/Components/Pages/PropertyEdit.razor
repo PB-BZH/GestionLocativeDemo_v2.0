@@ -154,7 +154,7 @@
             : "Ajouter un bien";
 
 
-    protected override void OnParametersSet() {
+    protected override async Task OnParametersSetAsync() {
 
         if (!Id.HasValue) {
             _property = new Property();
@@ -162,7 +162,7 @@
         }
 
         Property? existingProperty =
-            DemoData.GetProperty(Id.Value);
+            await DemoData.GetPropertyAsync(Id.Value);
 
         if (existingProperty == null) {
             Navigation.NavigateTo("/properties");
@@ -191,13 +191,13 @@
     }
 
 
-    private void Save() {
+    private async Task Save() {
 
         if (IsEditMode) {
-            DemoData.UpdateProperty(_property);
+            await DemoData.UpdatePropertyAsync(_property);
         }
         else {
-            DemoData.AddProperty(_property);
+            await DemoData.AddPropertyAsync(_property);
         }
 
         Navigation.NavigateTo("/properties");

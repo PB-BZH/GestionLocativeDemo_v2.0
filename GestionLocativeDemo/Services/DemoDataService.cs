@@ -1,12 +1,30 @@
+using GestionLocativeDemo.Data;
 using GestionLocativeDemo.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace GestionLocativeDemo.Services;
 
 public sealed class DemoDataService {
 
-  private readonly List<Property> _properties = [
-      new Property {
-          Id = 1,
+  private readonly IDbContextFactory<ApplicationDbContext> _dbFactory;
+
+  public DemoDataService(
+      IDbContextFactory<ApplicationDbContext> dbFactory) {
+
+    _dbFactory = dbFactory;
+  }
+
+  public async Task SeedPropertiesAsync() {
+
+    await using ApplicationDbContext db =
+        await _dbFactory.CreateDbContextAsync();
+
+    // Si des biens existent déjà, on ne touche à rien.
+    if (await db.Properties.AnyAsync())
+      return;
+
+    db.Properties.AddRange(
+        new Property {
           Type = "Appartement T2",
           Surface = 42,
           Floor = 2,
@@ -18,10 +36,9 @@ public sealed class DemoDataService {
           Rent = 750m,
           Charges = 50m,
           IsRented = true
-      },
+        },
 
-      new Property {
-          Id = 2,
+        new Property {
           Type = "Studio",
           Surface = 28,
           Floor = 1,
@@ -33,10 +50,9 @@ public sealed class DemoDataService {
           Rent = 590m,
           Charges = 40m,
           IsRented = true
-      },
+        },
 
-      new Property {
-          Id = 3,
+        new Property {
           Type = "Appartement T3",
           Surface = 61,
           Floor = 3,
@@ -48,19 +64,19 @@ public sealed class DemoDataService {
           Rent = 950m,
           Charges = 70m,
           IsRented = true
-      },
+        },
 
-      new Property {
-        Id = 4,
-        Type = "Maison T4",
-        Surface = 92,
-        City = "Lorient",
-        Rent = 1100m,
-        Charges = 50m,
-        IsRented = true
-    }
-  ];
+        new Property {
+          Type = "Maison T4",
+          Surface = 92,
+          City = "Lorient",
+          Rent = 1100m,
+          Charges = 50m,
+          IsRented = true
+        });
 
+    await db.SaveChangesAsync();
+  }
 
   private readonly List<Tenant> _tenants = [
       new Tenant {
@@ -125,82 +141,15 @@ public sealed class DemoDataService {
   ];
 
 
-  public IReadOnlyList<Property> Properties =>
-      _properties;
-
   public IReadOnlyList<Tenant> Tenants =>
       _tenants;
 
   public IReadOnlyList<RentDue> RentDues =>
       _rentDues;
 
-
-  public Property? GetProperty(int id) =>
-      _properties.FirstOrDefault(
-          property => property.Id == id);
-
-
   public Tenant? GetTenant(int id) =>
       _tenants.FirstOrDefault(
           tenant => tenant.Id == id);
-
-  public void AddProperty(Property property) {
-
-    int nextId =
-        _properties.Count == 0
-            ? 1
-            : _properties.Max(p => p.Id) + 1;
-
-    property.Id = nextId;
-
-    _properties.Add(property);
-  }
-
-
-  public bool UpdateProperty(Property property) {
-
-    Property? existingProperty =
-        _properties.FirstOrDefault(
-            p => p.Id == property.Id);
-
-    if (existingProperty == null)
-      return false;
-
-    existingProperty.Type =
-        property.Type;
-
-    existingProperty.Surface =
-        property.Surface;
-
-    existingProperty.Floor =
-        property.Floor;
-
-    existingProperty.LotNumber =
-        property.LotNumber;
-
-    existingProperty.Address =
-        property.Address;
-
-    existingProperty.PostalCode =
-        property.PostalCode;
-
-    existingProperty.City =
-        property.City;
-
-    existingProperty.FiscalIdentifier =
-        property.FiscalIdentifier;
-
-    existingProperty.Rent =
-        property.Rent;
-
-    existingProperty.Charges =
-        property.Charges;
-
-    existingProperty.IsRented =
-        property.IsRented;
-
-    return true;
-  }
 
   public void AddTenant(Tenant tenant) {
 
@@ -213,7 +162,6 @@ public sealed class DemoDataService {
 
     _tenants.Add(tenant);
   }
-
 
   public bool UpdateTenant(Tenant tenant) {
 
@@ -238,6 +186,67 @@ public sealed class DemoDataService {
 
     existingTenant.Phone =
         tenant.Phone;
+
+    return true;
+  }
+
+  public async Task<List<Property>> GetPropertiesAsync() {
+
+    await using ApplicationDbContext db =
+        await _dbFactory.CreateDbContextAsync();
+
+    return await db.Properties
+        .AsNoTracking()
+        .OrderBy(property => property.Id)
+        .ToListAsync();
+  }
+
+  public async Task<Property?> GetPropertyAsync(int id) {
+
+    await using ApplicationDbContext db =
+        await _dbFactory.CreateDbContextAsync();
+
+    return await db.Properties
+        .AsNoTracking()
+        .FirstOrDefaultAsync(property => property.Id == id);
+  }
+
+  public async Task AddPropertyAsync(Property property) {
+
+    await using ApplicationDbContext db =
+        await _dbFactory.CreateDbContextAsync();
+
+    db.Properties.Add(property);
+
+    await db.SaveChangesAsync();
+  }
+
+
+  public async Task<bool> UpdatePropertyAsync(Property property) {
+
+    await using ApplicationDbContext db =
+        await _dbFactory.CreateDbContextAsync();
+
+    Property? existingProperty =
+        await db.Properties
+            .FirstOrDefaultAsync(p => p.Id == property.Id);
+
+    if (existingProperty == null)
+      return false;
+
+    existingProperty.Type = property.Type;
+    existingProperty.Surface = property.Surface;
+    existingProperty.Floor = property.Floor;
+    existingProperty.LotNumber = property.LotNumber;
+    existingProperty.Address = property.Address;
+    existingProperty.PostalCode = property.PostalCode;
+    existingProperty.City = property.City;
+    existingProperty.FiscalIdentifier = property.FiscalIdentifier;
+    existingProperty.Rent = property.Rent;
+    existingProperty.Charges = property.Charges;
+    existingProperty.IsRented = property.IsRented;
+
+    await db.SaveChangesAsync();
 
     return true;
   }

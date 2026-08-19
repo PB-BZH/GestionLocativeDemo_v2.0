@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace GestionLocativeDemo.Models;
 
 public sealed class Property {
@@ -20,8 +22,10 @@ public sealed class Property {
 
   public string FiscalIdentifier { get; set; } = "";
 
+  [Precision(18,2)]
   public decimal Rent { get; set; }
 
+  [Precision(18,2)]
   public decimal Charges { get; set; }
 
   public bool IsRented { get; set; }

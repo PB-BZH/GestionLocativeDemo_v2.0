@@ -46,7 +46,7 @@ using (IServiceScope scope = app.Services.CreateScope()) {
       scope.ServiceProvider.GetRequiredService<DemoDataService>();
 
   await demoData.SeedPropertiesAsync();
-  await demoData.SeedTenantsAsync();
+  await demoData.SeedLocatairesAsync();
   await demoData.SeedRentDuesAsync();
 }
 

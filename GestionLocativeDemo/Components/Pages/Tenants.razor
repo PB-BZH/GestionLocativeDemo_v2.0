@@ -1,4 +1,4 @@
-@page "/tenants"
+@page "/Locataires"
 
 @using GestionLocativeDemo.Models
 @using GestionLocativeDemo.Services
@@ -8,7 +8,7 @@
 
 <PageTitle>Locataires - Gestion Locative</PageTitle>
 
-<div class="tenants-page">
+<div class="Locataires-page">
 
     <div class="page-header">
 
@@ -28,7 +28,7 @@
     </div>
 
 
-    <div class="tenants-summary">
+    <div class="Locataires-summary">
 
         <span class="summary-value">
             @TenantList.Count
@@ -41,7 +41,7 @@
     </div>
 
 
-    <div class="tenants-list">
+    <div class="Locataires-list">
 
         @foreach (Locataire tenant in TenantList) {
 
@@ -99,17 +99,17 @@
     protected override async Task OnInitializedAsync() {
 
         TenantList =
-            await DemoData.GetTenantsAsync();
+            await DemoData.GetLocatairesAsync();
     }
 
     private void NavigateToAddTenant() {
-        Navigation.NavigateTo("/tenants/new");
+        Navigation.NavigateTo("/Locataires/new");
     }
 
 
     private void EditTenant(int id) {
         Navigation.NavigateTo(
-            $"/tenants/edit/{id}");
+            $"/Locataires/edit/{id}");
     }
 
 

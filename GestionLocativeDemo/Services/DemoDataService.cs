@@ -14,15 +14,15 @@ public sealed class DemoDataService {
     _dbFactory = dbFactory;
   }
 
-  public async Task SeedTenantsAsync() {
+  public async Task SeedLocatairesAsync() {
 
     await using ApplicationDbContext db =
         await _dbFactory.CreateDbContextAsync();
 
-    if (await db.Tenants.AnyAsync())
+    if (await db.Locataires.AnyAsync())
       return;
 
-    db.Tenants.AddRange(
+    db.Locataires.AddRange(
         new Locataire {
           FirstName = "Marie",
           LastName = "Dupont",
@@ -175,12 +175,12 @@ public sealed class DemoDataService {
     return true;
   }
 
-  public async Task<List<Locataire>> GetTenantsAsync() {
+  public async Task<List<Locataire>> GetLocatairesAsync() {
 
     await using ApplicationDbContext db =
         await _dbFactory.CreateDbContextAsync();
 
-    return await db.Tenants
+    return await db.Locataires
         .AsNoTracking()
         .OrderBy(tenant => tenant.Id)
         .ToListAsync();
@@ -192,7 +192,7 @@ public sealed class DemoDataService {
     await using ApplicationDbContext db =
         await _dbFactory.CreateDbContextAsync();
 
-    return await db.Tenants
+    return await db.Locataires
         .AsNoTracking()
         .FirstOrDefaultAsync(tenant => tenant.Id == id);
   }
@@ -203,7 +203,7 @@ public sealed class DemoDataService {
     await using ApplicationDbContext db =
         await _dbFactory.CreateDbContextAsync();
 
-    db.Tenants.Add(tenant);
+    db.Locataires.Add(tenant);
 
     await db.SaveChangesAsync();
   }
@@ -215,7 +215,7 @@ public sealed class DemoDataService {
         await _dbFactory.CreateDbContextAsync();
 
     Locataire? existingTenant =
-        await db.Tenants
+        await db.Locataires
             .FirstOrDefaultAsync(t => t.Id == tenant.Id);
 
     if (existingTenant == null)
@@ -258,17 +258,17 @@ public sealed class DemoDataService {
 
 
     Locataire? marie =
-        await db.Tenants.FirstOrDefaultAsync(
+        await db.Locataires.FirstOrDefaultAsync(
             tenant =>
                 tenant.Email == "marie.dupont@example.fr");
 
     Locataire? julien =
-        await db.Tenants.FirstOrDefaultAsync(
+        await db.Locataires.FirstOrDefaultAsync(
             tenant =>
                 tenant.Email == "julien.leroy@example.fr");
 
     Locataire? sophie =
-        await db.Tenants.FirstOrDefaultAsync(
+        await db.Locataires.FirstOrDefaultAsync(
             tenant =>
                 tenant.Email == "sophie.bernard@example.fr");
 

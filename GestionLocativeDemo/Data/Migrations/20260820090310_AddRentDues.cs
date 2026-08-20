@@ -36,7 +36,7 @@ namespace GestionLocativeDemo.Migrations
                     table.ForeignKey(
                         name: "FK_RentDues_Tenants_TenantId",
                         column: x => x.TenantId,
-                        principalTable: "Tenants",
+                        principalTable: "Locataires",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });

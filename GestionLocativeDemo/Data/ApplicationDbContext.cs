@@ -9,7 +9,7 @@ public class ApplicationDbContext(
     : IdentityDbContext<ApplicationUser>(options) {
 
   public DbSet<Bien> Biens { get; set; }
-  public DbSet<Locataire> Tenants { get; set; }
+  public DbSet<Locataire> Locataires { get; set; }
   public DbSet<RentDue> RentDues { get; set; }
 
   protected override void OnModelCreating(

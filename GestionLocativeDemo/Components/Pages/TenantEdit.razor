@@ -1,5 +1,5 @@
-@page "/tenants/new"
-@page "/tenants/edit/{Id:int}"
+@page "/Locataires/new"
+@page "/Locataires/edit/{Id:int}"
 
 @using GestionLocativeDemo.Models
 @using GestionLocativeDemo.Services
@@ -111,7 +111,7 @@
             await DemoData.GetTenantAsync(Id.Value);
 
         if (existingTenant == null) {
-            Navigation.NavigateTo("/tenants");
+            Navigation.NavigateTo("/Locataires");
             return;
         }
 
@@ -133,10 +133,10 @@
         else
             await DemoData.AddTenantAsync(_tenant);
 
-        Navigation.NavigateTo("/tenants");
+        Navigation.NavigateTo("/Locataires");
     }
 
     private void Cancel() {
-        Navigation.NavigateTo("/tenants");
+        Navigation.NavigateTo("/Locataires");
     }
 }

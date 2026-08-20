@@ -23,7 +23,7 @@ public sealed class DemoDataService {
       return;
 
     db.Tenants.AddRange(
-        new Tenant {
+        new Locataire {
           FirstName = "Marie",
           LastName = "Dupont",
           Address = "12 rue de la République, 35000 Rennes",
@@ -31,7 +31,7 @@ public sealed class DemoDataService {
           Phone = "06 10 20 30 40"
         },
 
-        new Tenant {
+        new Locataire {
           FirstName = "Julien",
           LastName = "Leroy",
           Address = "8 avenue Victor-Hugo, 44000 Nantes",
@@ -39,7 +39,7 @@ public sealed class DemoDataService {
           Phone = "06 20 30 40 50"
         },
 
-        new Tenant {
+        new Locataire {
           FirstName = "Sophie",
           LastName = "Bernard",
           Address = "24 rue du Port, 56000 Vannes",
@@ -56,11 +56,11 @@ public sealed class DemoDataService {
         await _dbFactory.CreateDbContextAsync();
 
     // Si des biens existent déjà, on ne touche à rien.
-    if (await db.Properties.AnyAsync())
+    if (await db.Biens.AnyAsync())
       return;
 
-    db.Properties.AddRange(
-        new Property {
+    db.Biens.AddRange(
+        new Bien {
           Type = "Appartement T2",
           Surface = 42,
           Floor = 2,
@@ -74,7 +74,7 @@ public sealed class DemoDataService {
           IsRented = true
         },
 
-        new Property {
+        new Bien {
           Type = "Studio",
           Surface = 28,
           Floor = 1,
@@ -88,7 +88,7 @@ public sealed class DemoDataService {
           IsRented = true
         },
 
-        new Property {
+        new Bien {
           Type = "Appartement T3",
           Surface = 61,
           Floor = 3,
@@ -102,7 +102,7 @@ public sealed class DemoDataService {
           IsRented = true
         },
 
-        new Property {
+        new Bien {
           Type = "Maison T4",
           Surface = 92,
           City = "Lorient",
@@ -114,81 +114,45 @@ public sealed class DemoDataService {
     await db.SaveChangesAsync();
   }
 
-  private readonly List<RentDue> _rentDues = [
-      new RentDue {
-          Id = 1,
-          PropertyId = 1,
-          TenantId = 1,
-          DueDate = new DateTime(2026, 9, 5),
-          Rent = 750m,
-          Charges = 50m,
-          Status = RentDueStatus.Upcoming
-      },
-
-      new RentDue {
-          Id = 2,
-          PropertyId = 2,
-          TenantId = 2,
-          DueDate = new DateTime(2026, 9, 5),
-          Rent = 590m,
-          Charges = 40m,
-          Status = RentDueStatus.Upcoming
-      },
-
-      new RentDue {
-          Id = 3,
-          PropertyId = 3,
-          TenantId = 3,
-          DueDate = new DateTime(2026, 8, 5),
-          Rent = 730m,
-          Charges = 70m,
-          Status = RentDueStatus.Late
-      }
-  ];
-
-
-  public IReadOnlyList<RentDue> RentDues =>
-      _rentDues;
-
-  public async Task<List<Property>> GetPropertiesAsync() {
+  public async Task<List<Bien>> GetPropertiesAsync() {
 
     await using ApplicationDbContext db =
         await _dbFactory.CreateDbContextAsync();
 
-    return await db.Properties
+    return await db.Biens
         .AsNoTracking()
         .OrderBy(property => property.Id)
         .ToListAsync();
   }
 
-  public async Task<Property?> GetPropertyAsync(int id) {
+  public async Task<Bien?> GetPropertyAsync(int id) {
 
     await using ApplicationDbContext db =
         await _dbFactory.CreateDbContextAsync();
 
-    return await db.Properties
+    return await db.Biens
         .AsNoTracking()
         .FirstOrDefaultAsync(property => property.Id == id);
   }
 
-  public async Task AddPropertyAsync(Property property) {
+  public async Task AddPropertyAsync(Bien property) {
 
     await using ApplicationDbContext db =
         await _dbFactory.CreateDbContextAsync();
 
-    db.Properties.Add(property);
+    db.Biens.Add(property);
 
     await db.SaveChangesAsync();
   }
 
 
-  public async Task<bool> UpdatePropertyAsync(Property property) {
+  public async Task<bool> UpdatePropertyAsync(Bien property) {
 
     await using ApplicationDbContext db =
         await _dbFactory.CreateDbContextAsync();
 
-    Property? existingProperty =
-        await db.Properties
+    Bien? existingProperty =
+        await db.Biens
             .FirstOrDefaultAsync(p => p.Id == property.Id);
 
     if (existingProperty == null)
@@ -211,7 +175,7 @@ public sealed class DemoDataService {
     return true;
   }
 
-  public async Task<List<Tenant>> GetTenantsAsync() {
+  public async Task<List<Locataire>> GetTenantsAsync() {
 
     await using ApplicationDbContext db =
         await _dbFactory.CreateDbContextAsync();
@@ -223,7 +187,7 @@ public sealed class DemoDataService {
   }
 
 
-  public async Task<Tenant?> GetTenantAsync(int id) {
+  public async Task<Locataire?> GetTenantAsync(int id) {
 
     await using ApplicationDbContext db =
         await _dbFactory.CreateDbContextAsync();
@@ -234,7 +198,7 @@ public sealed class DemoDataService {
   }
 
 
-  public async Task AddTenantAsync(Tenant tenant) {
+  public async Task AddTenantAsync(Locataire tenant) {
 
     await using ApplicationDbContext db =
         await _dbFactory.CreateDbContextAsync();
@@ -245,12 +209,12 @@ public sealed class DemoDataService {
   }
 
 
-  public async Task<bool> UpdateTenantAsync(Tenant tenant) {
+  public async Task<bool> UpdateTenantAsync(Locataire tenant) {
 
     await using ApplicationDbContext db =
         await _dbFactory.CreateDbContextAsync();
 
-    Tenant? existingTenant =
+    Locataire? existingTenant =
         await db.Tenants
             .FirstOrDefaultAsync(t => t.Id == tenant.Id);
 
@@ -277,33 +241,33 @@ public sealed class DemoDataService {
       return;
 
 
-    Property? propertyRennes =
-        await db.Properties.FirstOrDefaultAsync(
+    Bien? propertyRennes =
+        await db.Biens.FirstOrDefaultAsync(
             property =>
                 property.FiscalIdentifier == "350238001234");
 
-    Property? propertyNantes =
-        await db.Properties.FirstOrDefaultAsync(
+    Bien? propertyNantes =
+        await db.Biens.FirstOrDefaultAsync(
             property =>
                 property.FiscalIdentifier == "440109005678");
 
-    Property? propertyVannes =
-        await db.Properties.FirstOrDefaultAsync(
+    Bien? propertyVannes =
+        await db.Biens.FirstOrDefaultAsync(
             property =>
                 property.FiscalIdentifier == "560260009876");
 
 
-    Tenant? marie =
+    Locataire? marie =
         await db.Tenants.FirstOrDefaultAsync(
             tenant =>
                 tenant.Email == "marie.dupont@example.fr");
 
-    Tenant? julien =
+    Locataire? julien =
         await db.Tenants.FirstOrDefaultAsync(
             tenant =>
                 tenant.Email == "julien.leroy@example.fr");
 
-    Tenant? sophie =
+    Locataire? sophie =
         await db.Tenants.FirstOrDefaultAsync(
             tenant =>
                 tenant.Email == "sophie.bernard@example.fr");
@@ -362,7 +326,7 @@ public sealed class DemoDataService {
     return await db.RentDues
         .AsNoTracking()
         .Include(rentDue => rentDue.Property)
-        .Include(rentDue => rentDue.Tenant)
+        .Include(rentDue => rentDue.Locataire)
         .OrderBy(rentDue => rentDue.DueDate)
         .ToListAsync();
   }

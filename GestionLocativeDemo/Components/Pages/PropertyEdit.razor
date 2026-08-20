@@ -143,7 +143,7 @@
     [Parameter]
     public int? Id { get; set; }
 
-    private Property _property = new();
+    private Bien _property = new();
 
     private bool IsEditMode =>
         Id.HasValue;
@@ -157,11 +157,11 @@
     protected override async Task OnParametersSetAsync() {
 
         if (!Id.HasValue) {
-            _property = new Property();
+            _property = new Bien();
             return;
         }
 
-        Property? existingProperty =
+        Bien? existingProperty =
             await DemoData.GetPropertyAsync(Id.Value);
 
         if (existingProperty == null) {
@@ -169,7 +169,7 @@
             return;
         }
 
-        _property = new Property {
+        _property = new Bien {
             Id = existingProperty.Id,
             Type = existingProperty.Type,
             Surface = existingProperty.Surface,

@@ -43,7 +43,7 @@
 
     <div class="tenants-list">
 
-        @foreach (Tenant tenant in TenantList) {
+        @foreach (Locataire tenant in TenantList) {
 
             <article class="tenant-card">
 
@@ -94,7 +94,7 @@
 
 @code {
 
-    private List<Tenant> TenantList = [];
+    private List<Locataire> TenantList = [];
 
     protected override async Task OnInitializedAsync() {
 
@@ -114,7 +114,7 @@
 
 
     private static string GetInitials(
-        Tenant tenant) {
+        Locataire tenant) {
 
         string first =
             string.IsNullOrWhiteSpace(tenant.FirstName)

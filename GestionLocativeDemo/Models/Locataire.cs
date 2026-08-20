@@ -1,6 +1,6 @@
 namespace GestionLocativeDemo.Models;
 
-public sealed class Tenant {
+public sealed class Locataire {
 
   public int Id { get; set; }
 

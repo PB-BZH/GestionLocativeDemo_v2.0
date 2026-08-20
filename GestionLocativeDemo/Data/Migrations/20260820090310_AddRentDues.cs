@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -30,7 +30,7 @@ namespace GestionLocativeDemo.Migrations
                     table.ForeignKey(
                         name: "FK_RentDues_Properties_PropertyId",
                         column: x => x.PropertyId,
-                        principalTable: "Properties",
+                        principalTable: "Biens",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(

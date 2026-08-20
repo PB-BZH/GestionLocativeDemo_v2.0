@@ -89,7 +89,7 @@
     [Parameter]
     public int? Id { get; set; }
 
-    private Tenant _tenant = new();
+    private Locataire _tenant = new();
 
     private bool IsEditMode =>
         Id.HasValue;
@@ -103,11 +103,11 @@
     protected override async Task OnParametersSetAsync() {
 
         if (!Id.HasValue) {
-            _tenant = new Tenant();
+            _tenant = new Locataire();
             return;
         }
 
-        Tenant? existingTenant =
+        Locataire? existingTenant =
             await DemoData.GetTenantAsync(Id.Value);
 
         if (existingTenant == null) {
@@ -115,7 +115,7 @@
             return;
         }
 
-        _tenant = new Tenant {
+        _tenant = new Locataire {
             Id = existingTenant.Id,
             FirstName = existingTenant.FirstName,
             LastName = existingTenant.LastName,

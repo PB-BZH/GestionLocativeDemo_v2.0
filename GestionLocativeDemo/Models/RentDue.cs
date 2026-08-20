@@ -15,11 +15,11 @@ public sealed class RentDue {
 
   public int PropertyId { get; set; }
 
-  public Property Property { get; set; } = null!;
+  public Bien Property { get; set; } = null!;
 
   public int TenantId { get; set; }
 
-  public Tenant Tenant { get; set; } = null!;
+  public Locataire Locataire { get; set; } = null!;
 
   public DateTime DueDate { get; set; }
 

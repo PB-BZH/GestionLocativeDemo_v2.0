@@ -115,13 +115,13 @@
                 <div class="rent-row">
 
                     <div class="tenant-avatar">
-                        @GetInitials(rentDue.Tenant)
+                        @GetInitials(rentDue.Locataire)
                     </div>
 
                     <div class="rent-main">
 
                         <div class="rent-name">
-                            @rentDue.Tenant.FullName
+                            @rentDue.Locataire.FullName
                         </div>
 
                         <div class="rent-property">
@@ -209,7 +209,7 @@
 
             <div class="property-list">
 
-                @foreach (Property property in Properties) {
+                @foreach (Bien property in Properties) {
 
                     <div class="property-line">
 
@@ -241,7 +241,7 @@
 
 @code {
 
-    private List<Property> Properties = [];
+    private List<Bien> Properties = [];
     private List<RentDue> RentDues = [];
 
     protected override async Task OnInitializedAsync() {
@@ -272,7 +272,7 @@
         ? 0
         : ReceivedRent / ExpectedRent * 100;
 
-    private static string GetInitials(Tenant? tenant) {
+    private static string GetInitials(Locataire? tenant) {
 
         if (tenant == null)
             return "?";

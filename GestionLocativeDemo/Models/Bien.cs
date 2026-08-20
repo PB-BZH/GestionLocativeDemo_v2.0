@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GestionLocativeDemo.Models;
 
-public sealed class Property {
+public sealed class Bien {
 
   public int Id { get; set; }
 

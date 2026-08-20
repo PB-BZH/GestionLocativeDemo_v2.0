@@ -65,7 +65,7 @@
 
     <div class="properties-list">
 
-        @foreach (Property property in RentalProperties) {
+        @foreach (Bien property in RentalProperties) {
 
             <article class="property-card">
 
@@ -174,7 +174,7 @@
 
 @code {
 
-    private List<Property> RentalProperties = [];
+    private List<Bien> RentalProperties = [];
 
     protected override async Task OnInitializedAsync() {
 

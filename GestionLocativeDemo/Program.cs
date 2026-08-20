@@ -47,6 +47,7 @@ using (IServiceScope scope = app.Services.CreateScope()) {
 
   await demoData.SeedPropertiesAsync();
   await demoData.SeedTenantsAsync();
+  await demoData.SeedRentDuesAsync();
 }
 
 // Configure the HTTP request pipeline.

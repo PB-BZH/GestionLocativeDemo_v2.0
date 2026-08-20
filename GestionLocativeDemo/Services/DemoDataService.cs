@@ -114,36 +114,6 @@ public sealed class DemoDataService {
     await db.SaveChangesAsync();
   }
 
-  private readonly List<Tenant> _tenants = [
-      new Tenant {
-          Id = 1,
-          FirstName = "Marie",
-          LastName = "Dupont",
-          Address = "12 rue de la République, 35000 Rennes",
-          Email = "marie.dupont@example.fr",
-          Phone = "06 10 20 30 40"
-      },
-
-      new Tenant {
-          Id = 2,
-          FirstName = "Julien",
-          LastName = "Leroy",
-          Address = "8 avenue Victor-Hugo, 44000 Nantes",
-          Email = "julien.leroy@example.fr",
-          Phone = "06 20 30 40 50"
-      },
-
-      new Tenant {
-          Id = 3,
-          FirstName = "Sophie",
-          LastName = "Bernard",
-          Address = "24 rue du Port, 56000 Vannes",
-          Email = "sophie.bernard@example.fr",
-          Phone = "06 30 40 50 60"
-      }
-  ];
-
-
   private readonly List<RentDue> _rentDues = [
       new RentDue {
           Id = 1,
@@ -177,54 +147,8 @@ public sealed class DemoDataService {
   ];
 
 
-  public IReadOnlyList<Tenant> Tenants =>
-      _tenants;
-
   public IReadOnlyList<RentDue> RentDues =>
       _rentDues;
-
-  public Tenant? GetTenant(int id) =>
-      _tenants.FirstOrDefault(
-          tenant => tenant.Id == id);
-
-  public void AddTenant(Tenant tenant) {
-
-    int nextId =
-        _tenants.Count == 0
-            ? 1
-            : _tenants.Max(t => t.Id) + 1;
-
-    tenant.Id = nextId;
-
-    _tenants.Add(tenant);
-  }
-
-  public bool UpdateTenant(Tenant tenant) {
-
-    Tenant? existingTenant =
-        _tenants.FirstOrDefault(
-            t => t.Id == tenant.Id);
-
-    if (existingTenant == null)
-      return false;
-
-    existingTenant.FirstName =
-        tenant.FirstName;
-
-    existingTenant.LastName =
-        tenant.LastName;
-
-    existingTenant.Address =
-        tenant.Address;
-
-    existingTenant.Email =
-        tenant.Email;
-
-    existingTenant.Phone =
-        tenant.Phone;
-
-    return true;
-  }
 
   public async Task<List<Property>> GetPropertiesAsync() {
 
@@ -342,5 +266,104 @@ public sealed class DemoDataService {
     await db.SaveChangesAsync();
 
     return true;
+  }
+
+  public async Task SeedRentDuesAsync() {
+
+    await using ApplicationDbContext db =
+        await _dbFactory.CreateDbContextAsync();
+
+    if (await db.RentDues.AnyAsync())
+      return;
+
+
+    Property? propertyRennes =
+        await db.Properties.FirstOrDefaultAsync(
+            property =>
+                property.FiscalIdentifier == "350238001234");
+
+    Property? propertyNantes =
+        await db.Properties.FirstOrDefaultAsync(
+            property =>
+                property.FiscalIdentifier == "440109005678");
+
+    Property? propertyVannes =
+        await db.Properties.FirstOrDefaultAsync(
+            property =>
+                property.FiscalIdentifier == "560260009876");
+
+
+    Tenant? marie =
+        await db.Tenants.FirstOrDefaultAsync(
+            tenant =>
+                tenant.Email == "marie.dupont@example.fr");
+
+    Tenant? julien =
+        await db.Tenants.FirstOrDefaultAsync(
+            tenant =>
+                tenant.Email == "julien.leroy@example.fr");
+
+    Tenant? sophie =
+        await db.Tenants.FirstOrDefaultAsync(
+            tenant =>
+                tenant.Email == "sophie.bernard@example.fr");
+
+
+    if (propertyRennes == null ||
+        propertyNantes == null ||
+        propertyVannes == null ||
+        marie == null ||
+        julien == null ||
+        sophie == null) {
+
+      throw new InvalidOperationException(
+          "Impossible d'initialiser les échéances : " +
+          "un bien ou un locataire de démonstration est introuvable.");
+    }
+
+
+    db.RentDues.AddRange(
+
+        new RentDue {
+          PropertyId = propertyRennes.Id,
+          TenantId = marie.Id,
+          DueDate = new DateTime(2026,9,5),
+          Rent = 750m,
+          Charges = 50m,
+          Status = RentDueStatus.Upcoming
+        },
+
+        new RentDue {
+          PropertyId = propertyNantes.Id,
+          TenantId = julien.Id,
+          DueDate = new DateTime(2026,9,5),
+          Rent = 590m,
+          Charges = 40m,
+          Status = RentDueStatus.Upcoming
+        },
+
+        new RentDue {
+          PropertyId = propertyVannes.Id,
+          TenantId = sophie.Id,
+          DueDate = new DateTime(2026,8,5),
+          Rent = 730m,
+          Charges = 70m,
+          Status = RentDueStatus.Late
+        });
+
+    await db.SaveChangesAsync();
+  }
+
+  public async Task<List<RentDue>> GetRentDuesAsync() {
+
+    await using ApplicationDbContext db =
+        await _dbFactory.CreateDbContextAsync();
+
+    return await db.RentDues
+        .AsNoTracking()
+        .Include(rentDue => rentDue.Property)
+        .Include(rentDue => rentDue.Tenant)
+        .OrderBy(rentDue => rentDue.DueDate)
+        .ToListAsync();
   }
 }

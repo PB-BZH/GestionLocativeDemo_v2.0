@@ -112,30 +112,22 @@
 
             @foreach (RentDue rentDue in RentDues) {
 
-                Tenant? tenant =
-                    Tenants.FirstOrDefault(
-                        tenant => tenant.Id == rentDue.TenantId);
-
-                Property? property =
-                    Properties.FirstOrDefault(
-                        property => property.Id == rentDue.PropertyId);
-
                 <div class="rent-row">
 
                     <div class="tenant-avatar">
-                        @GetInitials(tenant)
+                        @GetInitials(rentDue.Tenant)
                     </div>
 
                     <div class="rent-main">
 
                         <div class="rent-name">
-                            @(tenant?.FullName ?? "Locataire inconnu")
+                            @rentDue.Tenant.FullName
                         </div>
 
                         <div class="rent-property">
-                            @(property?.Type ?? "Bien inconnu")
+                            @rentDue.Property.Type
                             ·
-                            @(property?.City ?? "")
+                            @rentDue.Property.City
                         </div>
 
                     </div>
@@ -250,17 +242,15 @@
 @code {
 
     private List<Property> Properties = [];
-    private List<Tenant> Tenants = [];
-
-    private IReadOnlyList<RentDue> RentDues =>
-        DemoData.RentDues;
+    private List<RentDue> RentDues = [];
 
     protected override async Task OnInitializedAsync() {
 
         Properties =
             await DemoData.GetPropertiesAsync();
-        Tenants =
-            await DemoData.GetTenantsAsync();
+
+        RentDues =
+            await DemoData.GetRentDuesAsync();
     }
 
     private decimal ExpectedRent =>

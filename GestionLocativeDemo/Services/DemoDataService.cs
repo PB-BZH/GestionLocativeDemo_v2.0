@@ -61,54 +61,54 @@ public sealed class DemoDataService {
 
     db.Biens.AddRange(
         new Bien {
-          Type = "Appartement T2",
+          TypeBien = "Appartement T2",
           Surface = 42,
-          Floor = 2,
-          LotNumber = "12",
-          Address = "12 rue de la République",
-          PostalCode = "35000",
-          City = "Rennes",
-          FiscalIdentifier = "350238001234",
-          Rent = 750m,
+          Etage = 2,
+          NumeroLot = "12",
+          Adresse = "12 rue de la République",
+          CodePostal = "35000",
+          Ville = "Rennes",
+          IdentifiantFiscal = "350238001234",
+          Loyer = 750m,
           Charges = 50m,
-          IsRented = true
+          EstLoue = true
         },
 
         new Bien {
-          Type = "Studio",
+          TypeBien = "Studio",
           Surface = 28,
-          Floor = 1,
-          LotNumber = "4",
-          Address = "8 avenue Victor-Hugo",
-          PostalCode = "44000",
-          City = "Nantes",
-          FiscalIdentifier = "440109005678",
-          Rent = 590m,
+          Etage = 1,
+          NumeroLot = "4",
+          Adresse = "8 avenue Victor-Hugo",
+          CodePostal = "44000",
+          Ville = "Nantes",
+          IdentifiantFiscal = "440109005678",
+          Loyer = 590m,
           Charges = 40m,
-          IsRented = true
+          EstLoue = true
         },
 
         new Bien {
-          Type = "Appartement T3",
+          TypeBien = "Appartement T3",
           Surface = 61,
-          Floor = 3,
-          LotNumber = "8",
-          Address = "24 rue du Port",
-          PostalCode = "56000",
-          City = "Vannes",
-          FiscalIdentifier = "560260009876",
-          Rent = 950m,
+          Etage = 3,
+          NumeroLot = "8",
+          Adresse = "24 rue du Port",
+          CodePostal = "56000",
+          Ville = "Vannes",
+          IdentifiantFiscal = "560260009876",
+          Loyer = 950m,
           Charges = 70m,
-          IsRented = true
+          EstLoue = true
         },
 
         new Bien {
-          Type = "Maison T4",
+          TypeBien = "Maison T4",
           Surface = 92,
-          City = "Lorient",
-          Rent = 1100m,
+          Ville = "Lorient",
+          Loyer = 1100m,
           Charges = 50m,
-          IsRented = true
+          EstLoue = true
         });
 
     await db.SaveChangesAsync();
@@ -158,17 +158,17 @@ public sealed class DemoDataService {
     if (existingProperty == null)
       return false;
 
-    existingProperty.Type = property.Type;
+    existingProperty.TypeBien = property.TypeBien;
     existingProperty.Surface = property.Surface;
-    existingProperty.Floor = property.Floor;
-    existingProperty.LotNumber = property.LotNumber;
-    existingProperty.Address = property.Address;
-    existingProperty.PostalCode = property.PostalCode;
-    existingProperty.City = property.City;
-    existingProperty.FiscalIdentifier = property.FiscalIdentifier;
-    existingProperty.Rent = property.Rent;
+    existingProperty.Etage = property.Etage;
+    existingProperty.NumeroLot = property.NumeroLot;
+    existingProperty.Adresse = property.Adresse;
+    existingProperty.CodePostal = property.CodePostal;
+    existingProperty.Ville = property.Ville;
+    existingProperty.IdentifiantFiscal = property.IdentifiantFiscal;
+    existingProperty.Loyer = property.Loyer;
     existingProperty.Charges = property.Charges;
-    existingProperty.IsRented = property.IsRented;
+    existingProperty.EstLoue = property.EstLoue;
 
     await db.SaveChangesAsync();
 
@@ -244,17 +244,17 @@ public sealed class DemoDataService {
     Bien? propertyRennes =
         await db.Biens.FirstOrDefaultAsync(
             property =>
-                property.FiscalIdentifier == "350238001234");
+                property.IdentifiantFiscal == "350238001234");
 
     Bien? propertyNantes =
         await db.Biens.FirstOrDefaultAsync(
             property =>
-                property.FiscalIdentifier == "440109005678");
+                property.IdentifiantFiscal == "440109005678");
 
     Bien? propertyVannes =
         await db.Biens.FirstOrDefaultAsync(
             property =>
-                property.FiscalIdentifier == "560260009876");
+                property.IdentifiantFiscal == "560260009876");
 
 
     Locataire? marie =

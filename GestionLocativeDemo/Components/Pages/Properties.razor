@@ -74,17 +74,17 @@
                     <div class="property-heading">
 
                         <div>
-                            <h2>@property.Type</h2>
+                            <h2>@property.TypeBien</h2>
 
                             <div class="property-address">
-                                @property.Address,
-                                @property.PostalCode
-                                @property.City
+                                @property.Adresse,
+                                @property.CodePostal
+                                @property.Ville
                             </div>
                         </div>
 
-                        <span class="status @(property.IsRented ? "status-rented" : "status-free")">
-                            @(property.IsRented ? "Loué" : "Libre")
+                        <span class="status @(property.EstLoue ? "status-rented" : "status-free")">
+                            @(property.EstLoue ? "Loué" : "Libre")
                         </span>
 
                     </div>
@@ -109,7 +109,7 @@
                             </span>
 
                             <span class="detail-value">
-                                @(property.Floor?.ToString() ?? "—")
+                                @(property.Etage?.ToString() ?? "—")
                             </span>
                         </div>
 
@@ -120,9 +120,9 @@
                             </span>
 
                             <span class="detail-value">
-                                @(string.IsNullOrWhiteSpace(property.LotNumber)
+                                @(string.IsNullOrWhiteSpace(property.NumeroLot)
                                     ? "—"
-                                    : property.LotNumber)
+                                    : property.NumeroLot)
                             </span>
                         </div>
 
@@ -133,9 +133,9 @@
                             </span>
 
                             <span class="detail-value">
-                                @(string.IsNullOrWhiteSpace(property.FiscalIdentifier)
+                                @(string.IsNullOrWhiteSpace(property.IdentifiantFiscal)
                                     ? "—"
-                                    : property.FiscalIdentifier)
+                                    : property.IdentifiantFiscal)
                             </span>
                         </div>
 
@@ -151,7 +151,7 @@
                     </div>
 
                     <div class="rent-value">
-                        @property.Rent.ToString("N0") €
+                        @property.Loyer.ToString("N0") €
                     </div>
 
                     <div class="charges">
@@ -183,12 +183,12 @@
     }
 
     private int RentedCount =>
-        RentalProperties.Count(property => property.IsRented);
+        RentalProperties.Count(property => property.EstLoue);
 
     private decimal MonthlyIncome =>
         RentalProperties.Sum(
             property =>
-                property.Rent + property.Charges);
+                property.Loyer + property.Charges);
 
     private void NavigateToAddProperty() {
         Navigation.NavigateTo("/properties/new");

@@ -125,9 +125,9 @@
                         </div>
 
                         <div class="rent-property">
-                            @Echeance.Bien.Type
+                            @Echeance.Bien.TypeBien
                             ·
-                            @Echeance.Bien.City
+                            @Echeance.Bien.Ville
                         </div>
 
                     </div>
@@ -216,17 +216,17 @@
                         <div>
 
                             <strong>
-                                @property.Type
+                                @property.TypeBien
                             </strong>
 
                             <span>
-                                @property.City · @property.Surface.ToString("N0") m²
+                                @property.Ville · @property.Surface.ToString("N0") m²
                             </span>
 
                         </div>
 
                         <span class="property-rent">
-                            @((property.Rent + property.Charges).ToString("N0")) €/mois
+                            @((property.Loyer + property.Charges).ToString("N0")) €/mois
                         </span>
 
                     </div>
@@ -319,7 +319,7 @@
 
     private int RentedPropertyCount =>
         Properties.Count(
-            property => property.IsRented);
+            property => property.EstLoue);
 
     private decimal OccupancyRate =>
         PropertyCount == 0

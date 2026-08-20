@@ -20,6 +20,42 @@ public class ApplicationDbContext(
     builder.Entity<Bien>()
     .ToTable("Properties");
 
+    builder.Entity<Bien>()
+    .Property(bien => bien.TypeBien)
+    .HasColumnName("Type");
+
+    builder.Entity<Bien>()
+        .Property(bien => bien.Etage)
+        .HasColumnName("Floor");
+
+    builder.Entity<Bien>()
+        .Property(bien => bien.NumeroLot)
+        .HasColumnName("LotNumber");
+
+    builder.Entity<Bien>()
+        .Property(bien => bien.Adresse)
+        .HasColumnName("Address");
+
+    builder.Entity<Bien>()
+        .Property(bien => bien.CodePostal)
+        .HasColumnName("PostalCode");
+
+    builder.Entity<Bien>()
+        .Property(bien => bien.Ville)
+        .HasColumnName("City");
+
+    builder.Entity<Bien>()
+        .Property(bien => bien.IdentifiantFiscal)
+        .HasColumnName("FiscalIdentifier");
+
+    builder.Entity<Bien>()
+        .Property(bien => bien.Loyer)
+        .HasColumnName("Rent");
+
+    builder.Entity<Bien>()
+        .Property(bien => bien.EstLoue)
+        .HasColumnName("IsRented");
+
     builder.Entity<Locataire>()
     .ToTable("Tenants");
 

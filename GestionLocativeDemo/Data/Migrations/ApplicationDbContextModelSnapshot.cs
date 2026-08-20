@@ -96,7 +96,7 @@ namespace GestionLocativeDemo.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Address")
+                    b.Property<string>("Adresse")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -104,36 +104,36 @@ namespace GestionLocativeDemo.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("City")
+                    b.Property<string>("Ville")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FiscalIdentifier")
+                    b.Property<string>("IdentifiantFiscal")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Floor")
+                    b.Property<int?>("Etage")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsRented")
+                    b.Property<bool>("EstLoue")
                         .HasColumnType("bit");
 
-                    b.Property<string>("LotNumber")
+                    b.Property<string>("NumeroLot")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PostalCode")
+                    b.Property<string>("CodePostal")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Loyer")
+                    b.Property<decimal>("Rent")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<double>("Surface")
                         .HasColumnType("float");
 
-                    b.Property<string>("Type")
+                    b.Property<string>("TypeBien")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -160,7 +160,7 @@ namespace GestionLocativeDemo.Migrations
                     b.Property<int>("BienId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Loyer")
+                    b.Property<decimal>("Rent")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
@@ -187,7 +187,7 @@ namespace GestionLocativeDemo.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Address")
+                    b.Property<string>("Adresse")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

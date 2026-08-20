@@ -31,7 +31,7 @@
             <div class="form-field">
                 <label>Type de bien</label>
 
-                <input @bind="_property.Type" />
+                <input @bind="_property.TypeBien" />
             </div>
 
 
@@ -48,42 +48,42 @@
                 <label>Étage</label>
 
                 <input type="number"
-                       @bind="_property.Floor" />
+                       @bind="_property.Etage" />
             </div>
 
 
             <div class="form-field">
                 <label>Numéro de lot</label>
 
-                <input @bind="_property.LotNumber" />
+                <input @bind="_property.NumeroLot" />
             </div>
 
 
             <div class="form-field full-width">
                 <label>Adresse</label>
 
-                <input @bind="_property.Address" />
+                <input @bind="_property.Adresse" />
             </div>
 
 
             <div class="form-field">
                 <label>Code postal</label>
 
-                <input @bind="_property.PostalCode" />
+                <input @bind="_property.CodePostal" />
             </div>
 
 
             <div class="form-field">
                 <label>Ville</label>
 
-                <input @bind="_property.City" />
+                <input @bind="_property.Ville" />
             </div>
 
 
             <div class="form-field full-width">
                 <label>Identifiant fiscal</label>
 
-                <input @bind="_property.FiscalIdentifier" />
+                <input @bind="_property.IdentifiantFiscal" />
             </div>
 
 
@@ -92,7 +92,7 @@
 
                 <input type="number"
                        step="0.01"
-                       @bind="_property.Rent" />
+                       @bind="_property.Loyer" />
             </div>
 
 
@@ -109,7 +109,7 @@
 
                 <label>
                     <input type="checkbox"
-                           @bind="_property.IsRented" />
+                           @bind="_property.EstLoue" />
 
                     Bien actuellement loué
                 </label>
@@ -171,17 +171,17 @@
 
         _property = new Bien {
             Id = existingProperty.Id,
-            Type = existingProperty.Type,
+            TypeBien = existingProperty.TypeBien,
             Surface = existingProperty.Surface,
-            Floor = existingProperty.Floor,
-            LotNumber = existingProperty.LotNumber,
-            Address = existingProperty.Address,
-            PostalCode = existingProperty.PostalCode,
-            City = existingProperty.City,
-            FiscalIdentifier = existingProperty.FiscalIdentifier,
-            Rent = existingProperty.Rent,
+            Etage = existingProperty.Etage,
+            NumeroLot = existingProperty.NumeroLot,
+            Adresse = existingProperty.Adresse,
+            CodePostal = existingProperty.CodePostal,
+            Ville = existingProperty.Ville,
+            IdentifiantFiscal = existingProperty.IdentifiantFiscal,
+            Loyer = existingProperty.Loyer,
             Charges = existingProperty.Charges,
-            IsRented = existingProperty.IsRented
+            EstLoue = existingProperty.EstLoue
         };
     }
 

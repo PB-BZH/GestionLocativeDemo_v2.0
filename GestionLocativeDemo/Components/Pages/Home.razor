@@ -110,38 +110,38 @@
             </div>
 
 
-            @foreach (RentDue rentDue in RentDues) {
+            @foreach (Echeance Echeance in Echeances) {
 
                 <div class="rent-row">
 
                     <div class="tenant-avatar">
-                        @GetInitials(rentDue.Locataire)
+                        @GetInitials(Echeance.Locataire)
                     </div>
 
                     <div class="rent-main">
 
                         <div class="rent-name">
-                            @rentDue.Locataire.FullName
+                            @Echeance.Locataire.FullName
                         </div>
 
                         <div class="rent-property">
-                            @rentDue.Property.Type
+                            @Echeance.Bien.Type
                             ·
-                            @rentDue.Property.City
+                            @Echeance.Bien.City
                         </div>
 
                     </div>
 
                     <div class="rent-date">
-                        @rentDue.DueDate.ToString("dd/MM/yyyy")
+                        @Echeance.DateEcheance.ToString("dd/MM/yyyy")
                     </div>
 
                     <div class="rent-amount">
-                        @rentDue.Total.ToString("N0") €
+                        @Echeance.Total.ToString("N0") €
                     </div>
 
-                    <span class="status @GetStatusCssClass(rentDue.Status)">
-                        @GetStatusText(rentDue.Status)
+                    <span class="status @GetStatusCssClass(Echeance.Statut)">
+                        @GetStatusText(Echeance.Statut)
                     </span>
 
                 </div>
@@ -242,19 +242,19 @@
 @code {
 
     private List<Bien> Properties = [];
-    private List<RentDue> RentDues = [];
+    private List<Echeance> Echeances = [];
 
     protected override async Task OnInitializedAsync() {
 
         Properties =
             await DemoData.GetPropertiesAsync();
 
-        RentDues =
-            await DemoData.GetRentDuesAsync();
+        Echeances =
+            await DemoData.GetEcheancesAsync();
     }
 
     private decimal ExpectedRent =>
-        RentDues.Sum(rentDue => rentDue.Total);
+        Echeances.Sum(Echeance => Echeance.Total);
 
     private decimal ReceivedRent =>
         1650m;
@@ -263,9 +263,9 @@
         ExpectedRent - ReceivedRent;
 
     private int LateCount =>
-        RentDues.Count(
-            rentDue =>
-                rentDue.Status == RentDueStatus.Late);
+        Echeances.Count(
+            Echeance =>
+                Echeance.Statut == StatusEcheance.EnRetard);
 
     private decimal ReceivedPercentage =>
         ExpectedRent == 0
@@ -291,25 +291,25 @@
     }
 
     private static string GetStatusText(
-        RentDueStatus status) {
+        StatusEcheance status) {
 
         return status switch {
-            RentDueStatus.Upcoming => "À venir",
-            RentDueStatus.ToPay => "À payer",
-            RentDueStatus.Paid => "Payé",
-            RentDueStatus.Late => "En retard",
+            StatusEcheance.Avenir => "À venir",
+            StatusEcheance.APayer => "À payer",
+            StatusEcheance.Payee => "Payé",
+            StatusEcheance.EnRetard => "En retard",
             _ => ""
         };
     }
 
     private static string GetStatusCssClass(
-        RentDueStatus status) {
+        StatusEcheance status) {
 
         return status switch {
-            RentDueStatus.Upcoming => "status-upcoming",
-            RentDueStatus.ToPay => "status-to-pay",
-            RentDueStatus.Paid => "status-paid",
-            RentDueStatus.Late => "status-late",
+            StatusEcheance.Avenir => "status-upcoming",
+            StatusEcheance.APayer => "status-to-pay",
+            StatusEcheance.Payee => "status-paid",
+            StatusEcheance.EnRetard => "status-late",
             _ => ""
         };
     }

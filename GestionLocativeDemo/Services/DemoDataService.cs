@@ -232,12 +232,12 @@ public sealed class DemoDataService {
     return true;
   }
 
-  public async Task SeedRentDuesAsync() {
+  public async Task SeedEcheancesAsync() {
 
     await using ApplicationDbContext db =
         await _dbFactory.CreateDbContextAsync();
 
-    if (await db.RentDues.AnyAsync())
+    if (await db.Echeances.AnyAsync())
       return;
 
 
@@ -286,48 +286,48 @@ public sealed class DemoDataService {
     }
 
 
-    db.RentDues.AddRange(
+    db.Echeances.AddRange(
 
-        new RentDue {
-          PropertyId = propertyRennes.Id,
-          TenantId = marie.Id,
-          DueDate = new DateTime(2026,9,5),
-          Rent = 750m,
+        new Echeance {
+          BienId = propertyRennes.Id,
+          LocataireId = marie.Id,
+          DateEcheance = new DateTime(2026,9,5),
+          Loyer = 750m,
           Charges = 50m,
-          Status = RentDueStatus.Upcoming
+          Statut = StatusEcheance.Avenir
         },
 
-        new RentDue {
-          PropertyId = propertyNantes.Id,
-          TenantId = julien.Id,
-          DueDate = new DateTime(2026,9,5),
-          Rent = 590m,
+        new Echeance {
+          BienId = propertyNantes.Id,
+          LocataireId = julien.Id,
+          DateEcheance = new DateTime(2026,9,5),
+          Loyer = 590m,
           Charges = 40m,
-          Status = RentDueStatus.Upcoming
+          Statut = StatusEcheance.Avenir
         },
 
-        new RentDue {
-          PropertyId = propertyVannes.Id,
-          TenantId = sophie.Id,
-          DueDate = new DateTime(2026,8,5),
-          Rent = 730m,
+        new Echeance {
+          BienId = propertyVannes.Id,
+          LocataireId = sophie.Id,
+          DateEcheance = new DateTime(2026,8,5),
+          Loyer = 730m,
           Charges = 70m,
-          Status = RentDueStatus.Late
+          Statut = StatusEcheance.EnRetard
         });
 
     await db.SaveChangesAsync();
   }
 
-  public async Task<List<RentDue>> GetRentDuesAsync() {
+  public async Task<List<Echeance>> GetEcheancesAsync() {
 
     await using ApplicationDbContext db =
         await _dbFactory.CreateDbContextAsync();
 
-    return await db.RentDues
+    return await db.Echeances
         .AsNoTracking()
-        .Include(rentDue => rentDue.Property)
-        .Include(rentDue => rentDue.Locataire)
-        .OrderBy(rentDue => rentDue.DueDate)
+        .Include(Echeance => Echeance.Bien)
+        .Include(Echeance => Echeance.Locataire)
+        .OrderBy(Echeance => Echeance.DateEcheance)
         .ToListAsync();
   }
 }

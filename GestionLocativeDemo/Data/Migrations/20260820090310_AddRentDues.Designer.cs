@@ -129,7 +129,7 @@ namespace GestionLocativeDemo.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Rent")
+                    b.Property<decimal>("Loyer")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
@@ -157,27 +157,27 @@ namespace GestionLocativeDemo.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime>("DueDate")
+                    b.Property<DateTime>("DateEcheance")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("PropertyId")
+                    b.Property<int>("BienId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Rent")
+                    b.Property<decimal>("Loyer")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("Status")
+                    b.Property<int>("Statut")
                         .HasColumnType("int");
 
-                    b.Property<int>("TenantId")
+                    b.Property<int>("LocataireId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PropertyId");
+                    b.HasIndex("BienId");
 
-                    b.HasIndex("TenantId");
+                    b.HasIndex("LocataireId");
 
                     b.ToTable("RentDues");
                 });
@@ -373,13 +373,13 @@ namespace GestionLocativeDemo.Migrations
                 {
                     b.HasOne("GestionLocativeDemo.Models.Bien", "Bien")
                         .WithMany()
-                        .HasForeignKey("PropertyId")
+                        .HasForeignKey("BienId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("GestionLocativeDemo.Models.Tenant", "Tenant")
                         .WithMany()
-                        .HasForeignKey("TenantId")
+                        .HasForeignKey("LocataireId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

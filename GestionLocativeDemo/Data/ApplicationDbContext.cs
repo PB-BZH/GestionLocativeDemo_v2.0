@@ -11,6 +11,7 @@ public class ApplicationDbContext(
   public DbSet<Bien> Biens { get; set; }
   public DbSet<Locataire> Locataires { get; set; }
   public DbSet<Echeance> Echeances { get; set; }
+  public DbSet<Bail> Baux { get; set; }
 
   protected override void OnModelCreating(
     ModelBuilder builder) {
@@ -59,6 +60,23 @@ public class ApplicationDbContext(
     builder.Entity<Locataire>()
     .ToTable("Tenants");
 
+    builder.Entity<Locataire>()
+    .Property(locataire => locataire.Prenom)
+    .HasColumnName("FirstName");
+
+    builder.Entity<Locataire>()
+        .Property(locataire => locataire.Nom)
+        .HasColumnName("LastName");
+
+
+    builder.Entity<Locataire>()
+    .Property(locataire => locataire.Adresse)
+    .HasColumnName("Address");
+
+    builder.Entity<Locataire>()
+        .Property(locataire => locataire.Telephone)
+        .HasColumnName("Phone");
+
     builder.Entity<Echeance>()
         .ToTable("RentDues");
 
@@ -92,6 +110,18 @@ public class ApplicationDbContext(
         .HasOne(echeance => echeance.Locataire)
         .WithMany()
         .HasForeignKey(echeance => echeance.LocataireId)
+        .OnDelete(DeleteBehavior.Restrict);
+
+    builder.Entity<Bail>()
+    .HasOne(bail => bail.Bien)
+    .WithMany()
+    .HasForeignKey(bail => bail.BienId)
+    .OnDelete(DeleteBehavior.Restrict);
+
+    builder.Entity<Bail>()
+        .HasOne(bail => bail.Locataire)
+        .WithMany()
+        .HasForeignKey(bail => bail.LocataireId)
         .OnDelete(DeleteBehavior.Restrict);
   }
 }

@@ -29,21 +29,21 @@
             <div class="form-field">
                 <label>Prénom</label>
 
-                <input @bind="_tenant.FirstName" />
+                <input @bind="_tenant.Prenom" />
             </div>
 
 
             <div class="form-field">
                 <label>Nom</label>
 
-                <input @bind="_tenant.LastName" />
+                <input @bind="_tenant.Nom" />
             </div>
 
 
             <div class="form-field full-width">
                 <label>Adresse</label>
 
-                <input @bind="_tenant.Address" />
+                <input @bind="_tenant.Adresse" />
             </div>
 
 
@@ -59,7 +59,7 @@
                 <label>Téléphone</label>
 
                 <input type="tel"
-                       @bind="_tenant.Phone" />
+                       @bind="_tenant.Telephone" />
             </div>
 
         </div>
@@ -117,11 +117,11 @@
 
         _tenant = new Locataire {
             Id = existingTenant.Id,
-            FirstName = existingTenant.FirstName,
-            LastName = existingTenant.LastName,
-            Address = existingTenant.Address,
+            Prenom = existingTenant.Prenom,
+            Nom = existingTenant.Nom,
+            Adresse = existingTenant.Adresse,
             Email = existingTenant.Email,
-            Phone = existingTenant.Phone
+            Telephone = existingTenant.Telephone
         };
     }
 

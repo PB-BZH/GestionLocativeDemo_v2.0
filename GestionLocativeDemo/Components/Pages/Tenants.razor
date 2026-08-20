@@ -58,7 +58,7 @@
                     </h2>
 
                     <div class="tenant-address">
-                        @tenant.Address
+                        @tenant.Adresse
                     </div>
 
                     <div class="tenant-contact">
@@ -68,7 +68,7 @@
                         </span>
 
                         <span>
-                            @tenant.Phone
+                            @tenant.Telephone
                         </span>
 
                     </div>
@@ -117,14 +117,14 @@
         Locataire tenant) {
 
         string first =
-            string.IsNullOrWhiteSpace(tenant.FirstName)
+            string.IsNullOrWhiteSpace(tenant.Prenom)
                 ? ""
-                : tenant.FirstName[..1];
+                : tenant.Prenom[..1];
 
         string last =
-            string.IsNullOrWhiteSpace(tenant.LastName)
+            string.IsNullOrWhiteSpace(tenant.Nom)
                 ? ""
-                : tenant.LastName[..1];
+                : tenant.Nom[..1];
 
         return (first + last).ToUpperInvariant();
     }

@@ -24,27 +24,27 @@ public sealed class DemoDataService {
 
     db.Locataires.AddRange(
         new Locataire {
-          FirstName = "Marie",
-          LastName = "Dupont",
-          Address = "12 rue de la République, 35000 Rennes",
+          Prenom = "Marie",
+          Nom = "Dupont",
+          Adresse = "12 rue de la République, 35000 Rennes",
           Email = "marie.dupont@example.fr",
-          Phone = "06 10 20 30 40"
+          Telephone = "06 10 20 30 40"
         },
 
         new Locataire {
-          FirstName = "Julien",
-          LastName = "Leroy",
-          Address = "8 avenue Victor-Hugo, 44000 Nantes",
+          Prenom = "Julien",
+          Nom = "Leroy",
+          Adresse = "8 avenue Victor-Hugo, 44000 Nantes",
           Email = "julien.leroy@example.fr",
-          Phone = "06 20 30 40 50"
+          Telephone = "06 20 30 40 50"
         },
 
         new Locataire {
-          FirstName = "Sophie",
-          LastName = "Bernard",
-          Address = "24 rue du Port, 56000 Vannes",
+          Prenom = "Sophie",
+          Nom = "Bernard",
+          Adresse = "24 rue du Port, 56000 Vannes",
           Email = "sophie.bernard@example.fr",
-          Phone = "06 30 40 50 60"
+          Telephone = "06 30 40 50 60"
         });
 
     await db.SaveChangesAsync();
@@ -221,11 +221,11 @@ public sealed class DemoDataService {
     if (existingTenant == null)
       return false;
 
-    existingTenant.FirstName = tenant.FirstName;
-    existingTenant.LastName = tenant.LastName;
-    existingTenant.Address = tenant.Address;
+    existingTenant.Prenom = tenant.Prenom;
+    existingTenant.Nom = tenant.Nom;
+    existingTenant.Adresse = tenant.Adresse;
     existingTenant.Email = tenant.Email;
-    existingTenant.Phone = tenant.Phone;
+    existingTenant.Telephone = tenant.Telephone;
 
     await db.SaveChangesAsync();
 

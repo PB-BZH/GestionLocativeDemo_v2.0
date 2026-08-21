@@ -415,4 +415,113 @@ public sealed class DemoDataService {
           dateReference);
     }
   }
+
+  public async Task<bool> AddPaiementAsync(
+    Paiement paiement) {
+
+    await using ApplicationDbContext db =
+        await _dbFactory.CreateDbContextAsync();
+
+    Echeance? echeance =
+        await db.Echeances
+            .FirstOrDefaultAsync(
+                e => e.Id == paiement.EcheanceId);
+
+    if (echeance == null ||
+        paiement.Montant <= 0)
+      return false;
+
+
+    decimal montantDejaPaye =
+        await db.Paiements
+            .Where(
+                p => p.EcheanceId ==
+                     paiement.EcheanceId)
+            .SumAsync(
+                p => (decimal?)p.Montant)
+        ?? 0m;
+
+
+    decimal resteAPayer =
+        echeance.Total - montantDejaPaye;
+
+    // Échéance déjà soldée.
+    if (resteAPayer <= 0)
+      return false;
+
+    // On refuse pour l'instant les trop-perçus.
+    if (paiement.Montant > resteAPayer)
+      return false;
+
+
+    db.Paiements.Add(paiement);
+
+
+    decimal totalApresPaiement =
+        montantDejaPaye +
+        paiement.Montant;
+
+
+    if (totalApresPaiement >= echeance.Total) {
+
+      echeance.Statut =
+          StatusEcheance.Payee;
+    }
+    else {
+
+      echeance.Statut =
+          echeance.DateEcheance < DateTime.Today
+              ? StatusEcheance.EnRetard
+              : echeance.DateEcheance == DateTime.Today
+                  ? StatusEcheance.APayer
+                  : StatusEcheance.Avenir;
+    }
+
+
+    await db.SaveChangesAsync();
+
+    return true;
+  }
+
+  public async Task<List<Paiement>> GetPaiementsAsync(int echeanceId) {
+
+    await using ApplicationDbContext db =
+        await _dbFactory.CreateDbContextAsync();
+
+    return await db.Paiements
+        .AsNoTracking()
+        .Where(
+            paiement =>
+                paiement.EcheanceId == echeanceId)
+        .OrderByDescending(
+            paiement =>
+                paiement.DatePaiement)
+        .ToListAsync();
+  }
+
+  public async Task<List<Paiement>> GetPaiementsAsync() {
+
+    await using ApplicationDbContext db =
+        await _dbFactory.CreateDbContextAsync();
+
+    return await db.Paiements
+        .AsNoTracking()
+        .Include(paiement => paiement.Echeance)
+        .OrderByDescending(
+            paiement => paiement.DatePaiement)
+        .ToListAsync();
+  }
+
+  public async Task<Echeance?> GetEcheanceAsync(int id) {
+
+    await using ApplicationDbContext db =
+        await _dbFactory.CreateDbContextAsync();
+
+    return await db.Echeances
+        .AsNoTracking()
+        .Include(echeance => echeance.Bien)
+        .Include(echeance => echeance.Locataire)
+        .FirstOrDefaultAsync(
+            echeance => echeance.Id == id);
+  }
 }

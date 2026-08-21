@@ -1,0 +1,97 @@
+.paiement-edit-page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 30px;
+}
+
+.page-header p {
+    margin-top: 6px;
+    color: #6b7280;
+}
+
+.summary-card,
+.form-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.summary-card {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+    .summary-card > div {
+        display: flex;
+        flex-direction: column;
+    }
+
+.summary-label {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.summary-value {
+    margin-top: 4px;
+    font-weight: 600;
+}
+
+.remaining {
+    font-size: 20px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+    .form-field input,
+    .form-field select {
+        padding: 10px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+    }
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.cancel-button,
+.save-button {
+    padding: 10px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.cancel-button {
+    background: white;
+    border: 1px solid #d1d5db;
+}
+
+.save-button {
+    border: none;
+    background: #2563eb;
+    color: white;
+}
+
+.error-message {
+    margin-top: 18px;
+    color: #b91c1c;
+}

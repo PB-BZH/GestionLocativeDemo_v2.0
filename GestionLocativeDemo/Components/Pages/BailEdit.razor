@@ -201,14 +201,18 @@
 
     private async Task Save() {
 
-        if (_bail.BienId == 0 ||
-            _bail.LocataireId == 0)
-            return;
+        if (IsEditMode) {
 
-        if (IsEditMode)
             await DemoData.UpdateBailAsync(_bail);
-        else
+        }
+        else {
+
             await DemoData.AddBailAsync(_bail);
+
+            await DemoData.GenererEcheanceAsync(
+                _bail.Id,
+                DateTime.Today);
+        }
 
         Navigation.NavigateTo("/baux");
     }

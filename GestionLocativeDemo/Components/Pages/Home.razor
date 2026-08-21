@@ -244,6 +244,7 @@
 
     private List<Bien> Properties = [];
     private List<Echeance> Echeances = [];
+    private List<Paiement> Paiements = [];
 
     private IEnumerable<Echeance> EcheancesDuMois =>
     Echeances.Where(
@@ -258,6 +259,9 @@
 
         Echeances =
             await DemoData.GetEcheancesAsync();
+
+        Paiements =
+            await DemoData.GetPaiementsAsync();
     }
 
     private decimal ExpectedRent =>
@@ -266,21 +270,21 @@
 
 
     private decimal ReceivedRent =>
-        EcheancesDuMois
-            .Where(
-                echeance =>
-                    echeance.Statut == StatusEcheance.Payee)
-            .Sum(
-                echeance => echeance.Total);
+        Paiements
+            .Where(paiement =>
+                paiement.Echeance.DateEcheance.Year ==
+                    DateTime.Today.Year &&
+                paiement.Echeance.DateEcheance.Month ==
+                    DateTime.Today.Month)
+            .Sum(paiement =>
+                paiement.Montant);
 
 
     private decimal RemainingRent =>
-        EcheancesDuMois
-            .Where(
-                echeance =>
-                    echeance.Statut != StatusEcheance.Payee)
-            .Sum(
-                echeance => echeance.Total);
+        Math.Max(
+            0m,
+            ExpectedRent - ReceivedRent);
+
 
     private int RemainingCount =>
         EcheancesDuMois.Count(

@@ -1,0 +1,243 @@
+@page "/paiements/new/{EcheanceId:int}"
+
+@using GestionLocativeDemo.Models
+@using GestionLocativeDemo.Services
+
+@inject DemoDataService DemoData
+@inject NavigationManager Navigation
+
+<PageTitle>Enregistrer un paiement - Gestion Locative</PageTitle>
+
+<div class="paiement-edit-page">
+
+    <div class="page-header">
+        <div>
+            <h1>Enregistrer un paiement</h1>
+            <p>Renseignez le règlement associé à cette échéance.</p>
+        </div>
+    </div>
+
+    @if (_echeance == null) {
+
+        <div class="empty-state">
+            Échéance introuvable.
+        </div>
+    }
+    else {
+
+        <div class="summary-card">
+
+            <div>
+                <span class="summary-label">Locataire</span>
+                <span class="summary-value">
+                    @_echeance.Locataire.NomComplet
+                </span>
+            </div>
+
+            <div>
+                <span class="summary-label">Bien</span>
+                <span class="summary-value">
+                    @_echeance.Bien.TypeBien - @_echeance.Bien.Ville
+                </span>
+            </div>
+
+            <div>
+                <span class="summary-label">Échéance</span>
+                <span class="summary-value">
+                    @_echeance.DateEcheance.ToString("dd/MM/yyyy")
+                </span>
+            </div>
+
+            <div>
+                <span class="summary-label">Total dû</span>
+                <span class="summary-value">
+                    @_echeance.Total.ToString("N0") €
+                </span>
+            </div>
+
+            <div>
+                <span class="summary-label">Déjà payé</span>
+                <span class="summary-value">
+                    @MontantDejaPaye.ToString("N0") €
+                </span>
+            </div>
+
+            <div>
+                <span class="summary-label">Reste à payer</span>
+                <span class="summary-value remaining">
+                    @ResteAPayer.ToString("N0") €
+                </span>
+            </div>
+
+        </div>
+
+
+        <div class="form-card">
+
+            <div class="form-grid">
+
+                <div class="form-field">
+                    <label>Date du paiement</label>
+
+                    <input type="date"
+                           @bind="_paiement.DatePaiement" />
+                </div>
+
+                <div class="form-field">
+                    <label>Montant (€)</label>
+
+                    <input type="number"
+                           step="0.01"
+                           min="0.01"
+                           @bind="_paiement.Montant" />
+                </div>
+
+                <div class="form-field">
+                    <label>Mode de paiement</label>
+
+                    <select @bind="_paiement.Mode">
+                        <option value="@ModePaiement.Virement">
+                            Virement
+                        </option>
+                        <option value="@ModePaiement.Prelevement">
+                            Prélèvement
+                        </option>
+                        <option value="@ModePaiement.Cheque">
+                            Chèque
+                        </option>
+                        <option value="@ModePaiement.Especes">
+                            Espèces
+                        </option>
+                        <option value="@ModePaiement.Carte">
+                            Carte
+                        </option>
+                        <option value="@ModePaiement.Autre">
+                            Autre
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label>Référence</label>
+
+                    <input type="text"
+                           @bind="_paiement.Reference"
+                           placeholder="Optionnel" />
+                </div>
+
+            </div>
+
+
+            @if (!string.IsNullOrWhiteSpace(_messageErreur)) {
+
+                <div class="error-message">
+                    @_messageErreur
+                </div>
+            }
+
+
+            <div class="form-actions">
+
+                <button class="cancel-button"
+                        @onclick="Cancel">
+                    Annuler
+                </button>
+
+                <button class="save-button"
+                        @onclick="Save">
+                    Enregistrer
+                </button>
+
+            </div>
+
+        </div>
+    }
+
+</div>
+
+
+@code {
+
+    [Parameter]
+    public int EcheanceId { get; set; }
+
+    private Echeance? _echeance;
+
+    private Paiement _paiement = new();
+
+    private decimal MontantDejaPaye;
+
+    private string? _messageErreur;
+
+
+    private decimal ResteAPayer =>
+        _echeance == null
+            ? 0m
+            : _echeance.Total - MontantDejaPaye;
+
+
+    protected override async Task OnParametersSetAsync() {
+
+        _echeance =
+            await DemoData.GetEcheanceAsync(EcheanceId);
+
+        if (_echeance == null)
+            return;
+
+        List<Paiement> paiements =
+            await DemoData.GetPaiementsAsync(EcheanceId);
+
+        MontantDejaPaye =
+            paiements.Sum(
+                paiement => paiement.Montant);
+
+        _paiement = new Paiement {
+            EcheanceId = EcheanceId,
+            DatePaiement = DateTime.Today,
+            Montant = ResteAPayer,
+            Mode = ModePaiement.Virement
+        };
+    }
+
+
+    private async Task Save() {
+
+        _messageErreur = null;
+
+        if (_paiement.Montant <= 0) {
+
+            _messageErreur =
+                "Le montant doit être supérieur à zéro.";
+
+            return;
+        }
+
+        if (_paiement.Montant > ResteAPayer) {
+
+            _messageErreur =
+                "Le montant ne peut pas dépasser le reste à payer.";
+
+            return;
+        }
+
+        bool resultat =
+            await DemoData.AddPaiementAsync(
+                _paiement);
+
+        if (!resultat) {
+
+            _messageErreur =
+                "Le paiement n'a pas pu être enregistré.";
+
+            return;
+        }
+
+        Navigation.NavigateTo("/rent-due");
+    }
+
+
+    private void Cancel() {
+
+        Navigation.NavigateTo("/rent-due");
+    }
+}

@@ -12,6 +12,7 @@ public class ApplicationDbContext(
   public DbSet<Locataire> Locataires { get; set; }
   public DbSet<Echeance> Echeances { get; set; }
   public DbSet<Bail> Baux { get; set; }
+  public DbSet<Paiement> Paiements { get; set; }
 
   protected override void OnModelCreating(
     ModelBuilder builder) {
@@ -129,6 +130,12 @@ public class ApplicationDbContext(
     .WithMany()
     .HasForeignKey(echeance => echeance.BailId)
     .OnDelete(DeleteBehavior.Restrict);
+
+    builder.Entity<Paiement>()
+        .HasOne(paiement => paiement.Echeance)
+        .WithMany()
+        .HasForeignKey(paiement => paiement.EcheanceId)
+        .OnDelete(DeleteBehavior.Restrict);
   }
 }
 

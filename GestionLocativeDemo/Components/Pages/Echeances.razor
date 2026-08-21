@@ -1,0 +1,235 @@
+@page "/rent-due"
+
+@using GestionLocativeDemo.Models
+@using GestionLocativeDemo.Services
+
+@inject DemoDataService DemoData
+@inject NavigationManager Navigation
+
+<PageTitle>Échéances - Gestion Locative</PageTitle>
+
+<div class="echeances-page">
+
+    <div class="page-header">
+
+        <div>
+            <h1>Échéances</h1>
+            <p>Suivez les loyers attendus et leur règlement.</p>
+        </div>
+
+    </div>
+
+
+    @if (ListeEcheances.Count == 0) {
+
+        <div class="empty-state">
+
+            <h2>Aucune échéance</h2>
+
+            <p>
+                Les échéances seront générées automatiquement
+                à partir des baux actifs.
+            </p>
+
+        </div>
+    }
+    else {
+
+        <div class="echeances-list">
+
+            @foreach (Echeance echeance in ListeEcheances) {
+
+                <article class="echeance-card">
+
+                    <div class="echeance-main">
+
+                        <div>
+                            <h2>
+                                @echeance.Locataire.NomComplet
+                            </h2>
+
+                            <div class="property">
+                                @echeance.Bien.TypeBien · @echeance.Bien.Ville
+                            </div>
+                        </div>
+
+
+                        <div class="echeance-info">
+
+                            <div>
+                                <span class="label">Échéance</span>
+
+                                <span class="value">
+                                    @echeance.DateEcheance.ToString("dd/MM/yyyy")
+                                </span>
+                            </div>
+
+                            <div>
+                                <span class="label">Loyer</span>
+
+                                <span class="value">
+                                    @echeance.Loyer.ToString("N0") €
+                                </span>
+                            </div>
+
+                            <div>
+                                <span class="label">Charges</span>
+
+                                <span class="value">
+                                    @echeance.Charges.ToString("N0") €
+                                </span>
+                            </div>
+
+                            <div>
+                                <span class="label">Total</span>
+
+                                <span class="value total">
+                                    @echeance.Total.ToString("N0") €
+                                </span>
+                            </div>
+
+                            <div>
+                                <span class="label">Déjà payé</span>
+
+                                <span class="value">
+                                    @GetMontantPaye(echeance).ToString("N0") €
+                                </span>
+                            </div>
+
+                            <div>
+                                <span class="label">Reste à payer</span>
+
+                                <span class="value total">
+                                    @GetResteAPayer(echeance).ToString("N0") €
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="echeance-actions">
+
+                        <span class="status @GetStatusClass(echeance)">
+                            @GetStatusText(echeance)
+                        </span>
+
+                        @if (GetResteAPayer(echeance) > 0) {
+
+                            <button class="payment-button"
+                                    @onclick="() => EnregistrerPaiement(echeance.Id)">
+                                Enregistrer un paiement
+                            </button>
+                        }
+
+                    </div>
+
+                </article>
+            }
+
+        </div>
+    }
+
+</div>
+
+
+@code {
+
+    private List<Echeance> ListeEcheances = [];
+    private List<Paiement> Paiements = [];
+
+
+    protected override async Task OnInitializedAsync() {
+
+        ListeEcheances =
+            await DemoData.GetEcheancesAsync();
+
+        Paiements =
+            await DemoData.GetPaiementsAsync();
+    }
+
+    private void EnregistrerPaiement(int echeanceId) {
+
+        Navigation.NavigateTo(
+            $"/paiements/new/{echeanceId}");
+    }
+
+
+private string GetStatusText(
+    Echeance echeance) {
+
+    decimal montantPaye =
+        GetMontantPaye(echeance);
+
+    decimal resteAPayer =
+        GetResteAPayer(echeance);
+
+
+    if (resteAPayer <= 0)
+        return "Payée";
+
+
+    if (montantPaye > 0) {
+
+        if (echeance.DateEcheance < DateTime.Today)
+            return "Partiellement payée\nEn retard";
+
+        return "Partiellement payée";
+    }
+
+
+    return echeance.Statut switch {
+        StatusEcheance.Avenir => "À venir",
+        StatusEcheance.APayer => "À payer",
+        StatusEcheance.EnRetard => "En retard",
+        StatusEcheance.Payee => "Payée",
+        _ => echeance.Statut.ToString()
+    };
+}
+
+
+private string GetStatusClass(
+    Echeance echeance) {
+
+    decimal montantPaye =
+        GetMontantPaye(echeance);
+
+    decimal resteAPayer =
+        GetResteAPayer(echeance);
+
+
+    if (resteAPayer <= 0)
+        return "status-paid";
+
+
+    if (montantPaye > 0)
+        return "status-partial";
+
+
+    return echeance.Statut switch {
+        StatusEcheance.EnRetard => "status-late",
+        StatusEcheance.APayer => "status-due",
+        _ => "status-upcoming"
+    };
+}
+    private decimal GetMontantPaye(
+    Echeance echeance) {
+
+        return Paiements
+            .Where(paiement =>
+                paiement.EcheanceId == echeance.Id)
+            .Sum(paiement =>
+                paiement.Montant);
+    }
+
+
+    private decimal GetResteAPayer(
+        Echeance echeance) {
+
+        return Math.Max(
+            0m,
+            echeance.Total -
+            GetMontantPaye(echeance));
+    }
+}

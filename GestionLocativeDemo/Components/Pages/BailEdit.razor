@@ -1,0 +1,220 @@
+@page "/baux/new"
+@page "/baux/edit/{Id:int}"
+
+@using GestionLocativeDemo.Models
+@using GestionLocativeDemo.Services
+
+@inject DemoDataService DemoData
+@inject NavigationManager Navigation
+
+<PageTitle>@PageTitleText - Gestion Locative</PageTitle>
+
+<div class="bail-edit-page">
+
+    <div class="page-header">
+        <div>
+            <h1>@PageTitleText</h1>
+            <p>Renseignez les informations du bail.</p>
+        </div>
+    </div>
+
+    <div class="form-card">
+
+        <div class="form-grid">
+
+            <div class="form-field">
+                <label>Bien</label>
+                <select @bind="_bail.BienId">
+                    <option value="0">Sélectionner un bien</option>
+
+                    @foreach (Bien bien in Biens) {
+                        <option value="@bien.Id">
+                            @bien.TypeBien - @bien.Ville
+                        </option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label>Locataire</label>
+                <select @bind="_bail.LocataireId">
+                    <option value="0">Sélectionner un locataire</option>
+
+                    @foreach (Locataire locataire in Locataires) {
+                        <option value="@locataire.Id">
+                            @locataire.NomComplet
+                        </option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label>Type de bail</label>
+
+                <select @bind="_bail.Type">
+                    <option value="@TypeBail.HabitationNue">
+                        Habitation nue
+                    </option>
+                    <option value="@TypeBail.HabitationMeublee">
+                        Habitation meublée
+                    </option>
+                    <option value="@TypeBail.Etudiant">
+                        Étudiant
+                    </option>
+                    <option value="@TypeBail.Mobilite">
+                        Mobilité
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label>Date de début</label>
+                <input type="date"
+                       @bind="_bail.DateDebut" />
+            </div>
+
+            <div class="form-field">
+                <label>Durée (mois)</label>
+                <input type="number"
+                       min="1"
+                       @bind="_bail.DureeMois" />
+            </div>
+
+            <div class="form-field">
+                <label>Jour de paiement</label>
+                <input type="number"
+                       min="1"
+                       max="31"
+                       @bind="_bail.JourPaiement" />
+            </div>
+
+            <div class="form-field">
+                <label>Loyer mensuel (€)</label>
+                <input type="number"
+                       step="0.01"
+                       @bind="_bail.Loyer" />
+            </div>
+
+            <div class="form-field">
+                <label>Charges mensuelles (€)</label>
+                <input type="number"
+                       step="0.01"
+                       @bind="_bail.Charges" />
+            </div>
+
+            <div class="form-field">
+                <label>Dépôt de garantie (€)</label>
+                <input type="number"
+                       step="0.01"
+                       @bind="_bail.DepotGarantie" />
+            </div>
+
+            <div class="form-field checkbox-field">
+                <label>
+                    <input type="checkbox"
+                           @bind="_bail.EstActif" />
+                    Bail actif
+                </label>
+            </div>
+
+        </div>
+
+        <div class="form-actions">
+
+            <button class="cancel-button"
+                    @onclick="Cancel">
+                Annuler
+            </button>
+
+            <button class="save-button"
+                    @onclick="Save">
+                Enregistrer
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+@code {
+
+    [Parameter]
+    public int? Id { get; set; }
+
+    private Bail _bail = new();
+
+    private List<Bien> Biens = [];
+    private List<Locataire> Locataires = [];
+
+    private bool IsEditMode =>
+        Id.HasValue;
+
+    private string PageTitleText =>
+        IsEditMode
+            ? "Modifier le bail"
+            : "Ajouter un bail";
+
+
+    protected override async Task OnParametersSetAsync() {
+
+        Biens =
+            await DemoData.GetPropertiesAsync();
+
+        Locataires =
+            await DemoData.GetLocatairesAsync();
+
+        if (!Id.HasValue) {
+
+            _bail = new Bail {
+                DateDebut = DateTime.Today,
+                JourPaiement = 5,
+                EstActif = true
+            };
+
+            return;
+        }
+
+        Bail? bailExistant =
+            await DemoData.GetBailAsync(Id.Value);
+
+        if (bailExistant == null) {
+            Navigation.NavigateTo("/baux");
+            return;
+        }
+
+        _bail = new Bail {
+            Id = bailExistant.Id,
+            BienId = bailExistant.BienId,
+            LocataireId = bailExistant.LocataireId,
+            Type = bailExistant.Type,
+            DateDebut = bailExistant.DateDebut,
+            DureeMois = bailExistant.DureeMois,
+            Loyer = bailExistant.Loyer,
+            Charges = bailExistant.Charges,
+            DepotGarantie = bailExistant.DepotGarantie,
+            JourPaiement = bailExistant.JourPaiement,
+            EstActif = bailExistant.EstActif
+        };
+    }
+
+
+    private async Task Save() {
+
+        if (_bail.BienId == 0 ||
+            _bail.LocataireId == 0)
+            return;
+
+        if (IsEditMode)
+            await DemoData.UpdateBailAsync(_bail);
+        else
+            await DemoData.AddBailAsync(_bail);
+
+        Navigation.NavigateTo("/baux");
+    }
+
+
+    private void Cancel() {
+        Navigation.NavigateTo("/baux");
+    }
+}

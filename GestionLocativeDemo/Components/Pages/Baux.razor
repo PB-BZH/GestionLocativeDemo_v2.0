@@ -1,0 +1,217 @@
+@page "/baux"
+
+@using GestionLocativeDemo.Models
+@using GestionLocativeDemo.Services
+
+@inject DemoDataService DemoData
+@inject NavigationManager Navigation
+
+<PageTitle>Baux - Gestion Locative</PageTitle>
+
+<div class="leases-page">
+
+    <div class="page-header">
+
+        <div>
+            <h1>Baux</h1>
+            <p>
+                Gérez les contrats de location de votre patrimoine.
+            </p>
+        </div>
+
+        <button class="primary-action"
+                @onclick="NavigateToAddBail">
+            + Ajouter un bail
+        </button>
+
+    </div>
+
+    <div class="leases-summary">
+
+        <div>
+            <span class="summary-value">
+                @ListeBaux.Count
+            </span>
+
+            <span class="summary-label">
+                baux
+            </span>
+        </div>
+
+        <div>
+            <span class="summary-value">
+                @NombreBauxActifs
+            </span>
+
+            <span class="summary-label">
+                actifs
+            </span>
+        </div>
+
+        <div>
+            <span class="summary-value">
+                @MontantMensuel.ToString("N0") €
+            </span>
+
+            <span class="summary-label">
+                loyers + charges / mois
+            </span>
+        </div>
+
+    </div>
+
+
+    @if (ListeBaux.Count == 0) {
+
+        <div class="empty-state">
+
+            <h2>Aucun bail enregistré</h2>
+
+            <p>
+                Les biens et les locataires sont prêts.
+                Le premier bail pourra maintenant les associer.
+            </p>
+
+        </div>
+    }
+    else {
+
+        <div class="leases-list">
+
+            @foreach (Bail bail in ListeBaux) {
+
+                <article class="lease-card">
+
+                    <div class="lease-main">
+
+                        <div class="lease-heading">
+
+                            <div>
+                                <h2>
+                                    @bail.Bien.TypeBien
+                                </h2>
+
+                                <div class="lease-address">
+                                    @bail.Bien.Adresse,
+                                    @bail.Bien.CodePostal
+                                    @bail.Bien.Ville
+                                </div>
+                            </div>
+
+                            <span class="status @(bail.EstActif ? "status-active" : "status-inactive")">
+                                @(bail.EstActif ? "Actif" : "Terminé")
+                            </span>
+
+                        </div>
+
+
+                        <div class="lease-details">
+
+                            <div>
+                                <span class="detail-label">
+                                    Locataire
+                                </span>
+
+                                <span class="detail-value">
+                                    @bail.Locataire.NomComplet
+                                </span>
+                            </div>
+
+                            <div>
+                                <span class="detail-label">
+                                    Type de bail
+                                </span>
+
+                                <span class="detail-value">
+                                    @GetTypeBailText(bail.Type)
+                                </span>
+                            </div>
+
+                            <div>
+                                <span class="detail-label">
+                                    Début
+                                </span>
+
+                                <span class="detail-value">
+                                    @bail.DateDebut.ToString("dd/MM/yyyy")
+                                </span>
+                            </div>
+
+                            <div>
+                                <span class="detail-label">
+                                    Paiement
+                                </span>
+
+                                <span class="detail-value">
+                                    Le @bail.JourPaiement du mois
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="lease-financial">
+
+                        <div class="rent-label">
+                            Loyer mensuel
+                        </div>
+
+                        <div class="rent-value">
+                            @bail.Loyer.ToString("N0") €
+                        </div>
+
+                        <div class="charges">
+                            + @bail.Charges.ToString("N0") € charges
+                        </div>
+
+                    </div>
+
+                </article>
+            }
+
+        </div>
+    }
+
+</div>
+
+
+@code {
+
+    private List<Bail> ListeBaux = [];
+
+
+    protected override async Task OnInitializedAsync() {
+
+        ListeBaux =
+            await DemoData.GetBauxAsync();
+    }
+
+
+    private int NombreBauxActifs =>
+        ListeBaux.Count(bail => bail.EstActif);
+
+
+    private decimal MontantMensuel =>
+        ListeBaux
+            .Where(bail => bail.EstActif)
+            .Sum(bail => bail.Loyer + bail.Charges);
+
+
+    private static string GetTypeBailText(
+        TypeBail type) {
+
+        return type switch {
+            TypeBail.HabitationNue => "Habitation nue",
+            TypeBail.HabitationMeublee => "Habitation meublée",
+            TypeBail.Etudiant => "Étudiant",
+            TypeBail.Mobilite => "Mobilité",
+            _ => type.ToString()
+        };
+    }
+
+    private void NavigateToAddBail() {
+        Navigation.NavigateTo("/baux/new");
+    }
+}

@@ -14,6 +14,6 @@ public sealed class Locataire {
 
   public string Telephone { get; set; } = "";
 
-  public string FullName =>
+  public string NomComplet =>
       $"{Prenom} {Nom}";
 }

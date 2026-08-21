@@ -330,4 +330,69 @@ public sealed class DemoDataService {
         .OrderBy(Echeance => Echeance.DateEcheance)
         .ToListAsync();
   }
+
+  public async Task<List<Bail>> GetBauxAsync() {
+
+    await using ApplicationDbContext db =
+        await _dbFactory.CreateDbContextAsync();
+
+    return await db.Baux
+        .AsNoTracking()
+        .Include(bail => bail.Bien)
+        .Include(bail => bail.Locataire)
+        .OrderByDescending(bail => bail.EstActif)
+        .ThenByDescending(bail => bail.DateDebut)
+        .ToListAsync();
+  }
+  public async Task<Bail?> GetBailAsync(int id) {
+
+    await using ApplicationDbContext db =
+        await _dbFactory.CreateDbContextAsync();
+
+    return await db.Baux
+        .AsNoTracking()
+        .Include(bail => bail.Bien)
+        .Include(bail => bail.Locataire)
+        .FirstOrDefaultAsync(bail => bail.Id == id);
+  }
+
+
+  public async Task AddBailAsync(Bail bail) {
+
+    await using ApplicationDbContext db =
+        await _dbFactory.CreateDbContextAsync();
+
+    db.Baux.Add(bail);
+
+    await db.SaveChangesAsync();
+  }
+
+
+  public async Task<bool> UpdateBailAsync(Bail bail) {
+
+    await using ApplicationDbContext db =
+        await _dbFactory.CreateDbContextAsync();
+
+    Bail? bailExistant =
+        await db.Baux
+            .FirstOrDefaultAsync(b => b.Id == bail.Id);
+
+    if (bailExistant == null)
+      return false;
+
+    bailExistant.BienId = bail.BienId;
+    bailExistant.LocataireId = bail.LocataireId;
+    bailExistant.Type = bail.Type;
+    bailExistant.DateDebut = bail.DateDebut;
+    bailExistant.DureeMois = bail.DureeMois;
+    bailExistant.Loyer = bail.Loyer;
+    bailExistant.Charges = bail.Charges;
+    bailExistant.DepotGarantie = bail.DepotGarantie;
+    bailExistant.JourPaiement = bail.JourPaiement;
+    bailExistant.EstActif = bail.EstActif;
+
+    await db.SaveChangesAsync();
+
+    return true;
+  }
 }

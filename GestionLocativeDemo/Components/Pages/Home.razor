@@ -37,7 +37,7 @@
             </div>
 
             <div class="stat-detail">
-                Août 2026
+                @MoisCourant
             </div>
         </div>
 
@@ -67,7 +67,8 @@
             </div>
 
             <div class="stat-detail warning">
-                1 échéance
+                @RemainingCount
+                @(RemainingCount > 1 ? "échéances" : "échéance")
             </div>
         </div>
 
@@ -244,6 +245,12 @@
     private List<Bien> Properties = [];
     private List<Echeance> Echeances = [];
 
+    private IEnumerable<Echeance> EcheancesDuMois =>
+    Echeances.Where(
+        echeance =>
+            echeance.DateEcheance.Year == DateTime.Today.Year &&
+            echeance.DateEcheance.Month == DateTime.Today.Month);
+
     protected override async Task OnInitializedAsync() {
 
         Properties =
@@ -254,13 +261,31 @@
     }
 
     private decimal ExpectedRent =>
-        Echeances.Sum(Echeance => Echeance.Total);
+        EcheancesDuMois.Sum(
+            echeance => echeance.Total);
+
 
     private decimal ReceivedRent =>
-        1650m;
+        EcheancesDuMois
+            .Where(
+                echeance =>
+                    echeance.Statut == StatusEcheance.Payee)
+            .Sum(
+                echeance => echeance.Total);
+
 
     private decimal RemainingRent =>
-        ExpectedRent - ReceivedRent;
+        EcheancesDuMois
+            .Where(
+                echeance =>
+                    echeance.Statut != StatusEcheance.Payee)
+            .Sum(
+                echeance => echeance.Total);
+
+    private int RemainingCount =>
+        EcheancesDuMois.Count(
+            echeance =>
+                echeance.Statut != StatusEcheance.Payee);
 
     private int LateCount =>
         Echeances.Count(
@@ -330,5 +355,20 @@
 
     private void NavigateToAddProperty() {
         Navigation.NavigateTo("/properties/new");
+    }
+
+    private string MoisCourant {
+
+        get {
+
+            string texte =
+                DateTime.Today.ToString(
+                    "MMMM yyyy",
+                    System.Globalization.CultureInfo
+                        .GetCultureInfo("fr-FR"));
+
+            return char.ToUpper(texte[0]) +
+                   texte[1..];
+        }
     }
 }

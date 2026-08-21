@@ -232,92 +232,6 @@ public sealed class DemoDataService {
     return true;
   }
 
-  public async Task SeedEcheancesAsync() {
-
-    await using ApplicationDbContext db =
-        await _dbFactory.CreateDbContextAsync();
-
-    if (await db.Echeances.AnyAsync())
-      return;
-
-
-    Bien? propertyRennes =
-        await db.Biens.FirstOrDefaultAsync(
-            property =>
-                property.IdentifiantFiscal == "350238001234");
-
-    Bien? propertyNantes =
-        await db.Biens.FirstOrDefaultAsync(
-            property =>
-                property.IdentifiantFiscal == "440109005678");
-
-    Bien? propertyVannes =
-        await db.Biens.FirstOrDefaultAsync(
-            property =>
-                property.IdentifiantFiscal == "560260009876");
-
-
-    Locataire? marie =
-        await db.Locataires.FirstOrDefaultAsync(
-            tenant =>
-                tenant.Email == "marie.dupont@example.fr");
-
-    Locataire? julien =
-        await db.Locataires.FirstOrDefaultAsync(
-            tenant =>
-                tenant.Email == "julien.leroy@example.fr");
-
-    Locataire? sophie =
-        await db.Locataires.FirstOrDefaultAsync(
-            tenant =>
-                tenant.Email == "sophie.bernard@example.fr");
-
-
-    if (propertyRennes == null ||
-        propertyNantes == null ||
-        propertyVannes == null ||
-        marie == null ||
-        julien == null ||
-        sophie == null) {
-
-      throw new InvalidOperationException(
-          "Impossible d'initialiser les échéances : " +
-          "un bien ou un locataire de démonstration est introuvable.");
-    }
-
-
-    db.Echeances.AddRange(
-
-        new Echeance {
-          BienId = propertyRennes.Id,
-          LocataireId = marie.Id,
-          DateEcheance = new DateTime(2026,9,5),
-          Loyer = 750m,
-          Charges = 50m,
-          Statut = StatusEcheance.Avenir
-        },
-
-        new Echeance {
-          BienId = propertyNantes.Id,
-          LocataireId = julien.Id,
-          DateEcheance = new DateTime(2026,9,5),
-          Loyer = 590m,
-          Charges = 40m,
-          Statut = StatusEcheance.Avenir
-        },
-
-        new Echeance {
-          BienId = propertyVannes.Id,
-          LocataireId = sophie.Id,
-          DateEcheance = new DateTime(2026,8,5),
-          Loyer = 730m,
-          Charges = 70m,
-          Statut = StatusEcheance.EnRetard
-        });
-
-    await db.SaveChangesAsync();
-  }
-
   public async Task<List<Echeance>> GetEcheancesAsync() {
 
     await using ApplicationDbContext db =
@@ -394,5 +308,111 @@ public sealed class DemoDataService {
     await db.SaveChangesAsync();
 
     return true;
+  }
+
+  public async Task<Echeance?> GenererEcheanceAsync(
+    int bailId,
+    DateTime mois) {
+
+    await using ApplicationDbContext db =
+        await _dbFactory.CreateDbContextAsync();
+
+    Bail? bail =
+        await db.Baux
+            .Include(b => b.Bien)
+            .Include(b => b.Locataire)
+            .FirstOrDefaultAsync(b => b.Id == bailId);
+
+    if (bail == null || !bail.EstActif)
+      return null;
+
+    DateTime premierJourMois =
+        new(mois.Year,mois.Month,1);
+
+    DateTime premierJourBail =
+        new(bail.DateDebut.Year,bail.DateDebut.Month,1);
+
+    if (premierJourMois < premierJourBail)
+      return null;
+
+    if (bail.DureeMois.HasValue) {
+
+      DateTime premierMoisHorsBail =
+          premierJourBail.AddMonths(
+              bail.DureeMois.Value);
+
+      if (premierJourMois >= premierMoisHorsBail)
+        return null;
+    }
+
+
+    if (bail == null || !bail.EstActif)
+      return null;
+
+    int jour =
+        Math.Min(
+            bail.JourPaiement,
+            DateTime.DaysInMonth(
+                mois.Year,
+                mois.Month));
+
+    DateTime dateEcheance =
+        new(
+            mois.Year,
+            mois.Month,
+            jour);
+
+    bool existeDeja =
+        await db.Echeances.AnyAsync(
+            e => e.BailId == bailId &&
+                 e.DateEcheance.Year == mois.Year &&
+                 e.DateEcheance.Month == mois.Month);
+
+    if (existeDeja)
+      return null;
+
+    Echeance echeance = new() {
+      BailId = bail.Id,
+
+      // Encore conservés pendant la phase de transition.
+      BienId = bail.BienId,
+      LocataireId = bail.LocataireId,
+
+      DateEcheance = dateEcheance,
+      Loyer = bail.Loyer,
+      Charges = bail.Charges,
+      Statut =
+        dateEcheance < DateTime.Today
+          ? StatusEcheance.EnRetard
+          : dateEcheance == DateTime.Today
+              ? StatusEcheance.APayer
+              : StatusEcheance.Avenir
+    };
+
+    db.Echeances.Add(echeance);
+
+    await db.SaveChangesAsync();
+
+    return echeance;
+  }
+
+  public async Task GenererEcheancesManquantesAsync(
+    DateTime dateReference) {
+
+    await using ApplicationDbContext db =
+        await _dbFactory.CreateDbContextAsync();
+
+    List<int> bailIds =
+        await db.Baux
+            .Where(bail => bail.EstActif)
+            .Select(bail => bail.Id)
+            .ToListAsync();
+
+    foreach (int bailId in bailIds) {
+
+      await GenererEcheanceAsync(
+          bailId,
+          dateReference);
+    }
   }
 }

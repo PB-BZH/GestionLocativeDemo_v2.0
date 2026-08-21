@@ -123,6 +123,12 @@ public class ApplicationDbContext(
         .WithMany()
         .HasForeignKey(bail => bail.LocataireId)
         .OnDelete(DeleteBehavior.Restrict);
+
+    builder.Entity<Echeance>()
+    .HasOne(echeance => echeance.Bail)
+    .WithMany()
+    .HasForeignKey(echeance => echeance.BailId)
+    .OnDelete(DeleteBehavior.Restrict);
   }
 }
 

@@ -33,4 +33,8 @@ public sealed class Echeance {
 
   public decimal Total =>
       Loyer + Charges;
+
+  public int? BailId { get; set; }
+
+  public Bail? Bail { get; set; }
 }

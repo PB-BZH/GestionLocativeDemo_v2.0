@@ -524,4 +524,74 @@ public sealed class DemoDataService {
         .FirstOrDefaultAsync(
             echeance => echeance.Id == id);
   }
+
+  public async Task<List<Echeance>>
+    GetEcheancesPayeesAsync() {
+
+    await using ApplicationDbContext db =
+        await _dbFactory.CreateDbContextAsync();
+
+    return await db.Echeances
+        .AsNoTracking()
+        .Include(echeance => echeance.Bien)
+        .Include(echeance => echeance.Locataire)
+        .Include(echeance => echeance.Bail)
+        .Where(echeance =>
+            echeance.Statut == StatusEcheance.Payee)
+        .OrderByDescending(
+            echeance => echeance.DateEcheance)
+        .ToListAsync();
+  }
+
+  public async Task<Bailleur?> GetBailleurAsync() {
+
+    await using ApplicationDbContext db =
+        await _dbFactory.CreateDbContextAsync();
+
+    return await db.Bailleurs
+        .AsNoTracking()
+        .FirstOrDefaultAsync();
+  }
+
+
+  public async Task SaveBailleurAsync(
+      Bailleur bailleur) {
+
+    await using ApplicationDbContext db =
+        await _dbFactory.CreateDbContextAsync();
+
+    Bailleur? bailleurExistant =
+        await db.Bailleurs
+            .FirstOrDefaultAsync();
+
+    if (bailleurExistant == null) {
+
+      db.Bailleurs.Add(bailleur);
+    }
+    else {
+
+      bailleurExistant.Prenom =
+          bailleur.Prenom;
+
+      bailleurExistant.Nom =
+          bailleur.Nom;
+
+      bailleurExistant.Adresse =
+          bailleur.Adresse;
+
+      bailleurExistant.CodePostal =
+          bailleur.CodePostal;
+
+      bailleurExistant.Ville =
+          bailleur.Ville;
+
+      bailleurExistant.Email =
+          bailleur.Email;
+
+      bailleurExistant.Telephone =
+          bailleur.Telephone;
+    }
+
+    await db.SaveChangesAsync();
+  }
 }

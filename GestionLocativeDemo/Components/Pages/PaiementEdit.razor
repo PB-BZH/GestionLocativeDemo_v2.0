@@ -160,37 +160,21 @@
 
     [Parameter]
     public int EcheanceId { get; set; }
-
     private Echeance? _echeance;
-
     private Paiement _paiement = new();
-
     private decimal MontantDejaPaye;
-
     private string? _messageErreur;
-
-
     private decimal ResteAPayer =>
         _echeance == null
             ? 0m
             : _echeance.Total - MontantDejaPaye;
 
-
     protected override async Task OnParametersSetAsync() {
-
-        _echeance =
-            await DemoData.GetEcheanceAsync(EcheanceId);
-
+        _echeance = await DemoData.GetEcheanceAsync(EcheanceId);
         if (_echeance == null)
             return;
-
-        List<Paiement> paiements =
-            await DemoData.GetPaiementsAsync(EcheanceId);
-
-        MontantDejaPaye =
-            paiements.Sum(
-                paiement => paiement.Montant);
-
+        List<Paiement> paiements = await DemoData.GetPaiementsAsync(EcheanceId);
+        MontantDejaPaye = paiements.Sum(paiement => paiement.Montant);
         _paiement = new Paiement {
             EcheanceId = EcheanceId,
             DatePaiement = DateTime.Today,
@@ -201,43 +185,25 @@
 
 
     private async Task Save() {
-
         _messageErreur = null;
-
         if (_paiement.Montant <= 0) {
-
-            _messageErreur =
-                "Le montant doit être supérieur à zéro.";
-
+            _messageErreur = "Le montant doit être supérieur à zéro.";
             return;
         }
-
         if (_paiement.Montant > ResteAPayer) {
-
-            _messageErreur =
-                "Le montant ne peut pas dépasser le reste à payer.";
-
+            _messageErreur = "Le montant ne peut pas dépasser le reste à payer.";
             return;
         }
-
-        bool resultat =
-            await DemoData.AddPaiementAsync(
-                _paiement);
-
+        bool resultat = await DemoData.AddPaiementAsync(_paiement);
         if (!resultat) {
-
-            _messageErreur =
-                "Le paiement n'a pas pu être enregistré.";
-
+            _messageErreur = "Le paiement n'a pas pu être enregistré.";
             return;
         }
-
         Navigation.NavigateTo("/rent-due");
     }
 
 
     private void Cancel() {
-
         Navigation.NavigateTo("/rent-due");
     }
 }

@@ -1,0 +1,327 @@
+@page "/documents"
+
+@using System.Globalization
+@using GestionLocativeDemo.Models
+@using GestionLocativeDemo.Services
+
+@inject DemoDataService DemoData
+@inject NavigationManager Navigation
+
+<PageTitle>Documents - Gestion Locative</PageTitle>
+
+<div class="documents-page">
+
+    <div class="page-header">
+
+        <div>
+            <h1>Documents</h1>
+            <p>
+                Retrouvez et générez les documents liés
+                à votre gestion locative.
+            </p>
+        </div>
+
+        <button class="profile-button"
+                @onclick="OuvrirProfilBailleur">
+            Profil bailleur
+        </button>
+
+    </div>
+
+
+    <div class="documents-summary">
+
+        <div>
+            <span class="summary-value">
+                @EcheancesPayees.Count
+            </span>
+
+            <span class="summary-label">
+                quittances disponibles
+            </span>
+        </div>
+
+        <div>
+            <span class="summary-value">
+                @EcheancesAvecSolde.Count
+            </span>
+
+            <span class="summary-label">
+                avis d'échéance disponibles
+            </span>
+        </div>
+
+    </div>
+
+    @if (EcheancesPayees.Count > 0) {
+
+        <div class="section-header">
+            <h2>Quittances de loyer</h2>
+
+            <p>
+                Échéances entièrement réglées.
+            </p>
+        </div>
+    }
+
+
+    @if (EcheancesPayees.Count == 0) {
+
+        <div class="empty-state">
+
+            <h2>Aucune quittance disponible</h2>
+
+            <p>
+                Une quittance pourra être générée lorsqu'une
+                échéance aura été entièrement réglée.
+            </p>
+
+        </div>
+    }
+    else {
+
+        <div class="documents-list">
+
+            @foreach (Echeance echeance in EcheancesPayees) {
+
+                <article class="document-card">
+
+                    <div class="document-icon">
+                        PDF
+                    </div>
+
+                    <div class="document-info">
+
+                        <h2>
+                            Quittance de loyer
+                        </h2>
+
+                        <div class="document-subtitle">
+                            @GetMois(echeance.DateEcheance)
+                        </div>
+
+                        <div class="document-details">
+
+                            <span>
+                                @echeance.Locataire.NomComplet
+                            </span>
+
+                            <span>
+                                @echeance.Bien.TypeBien -
+                                @echeance.Bien.Ville
+                            </span>
+
+                            <span>
+                                @echeance.Total.ToString("N0") €
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="document-actions">
+
+                        <span class="available">
+                            Disponible
+                        </span>
+
+                        <button class="generate-button"
+                                @onclick="() => GenererQuittance(echeance.Id)">
+                            Générer la quittance
+                        </button>
+
+                    </div>
+
+                </article>
+            }
+
+        </div>
+    }
+
+    @if (EcheancesAvecSolde.Count > 0) {
+
+        <div class="section-header">
+
+            <h2>Avis d'échéance</h2>
+
+            <p>
+                Échéances restant totalement ou partiellement à régler.
+            </p>
+
+        </div>
+
+
+        <div class="documents-list">
+
+            @foreach (Echeance echeance in EcheancesAvecSolde) {
+
+                decimal montantPaye =
+                    GetMontantPaye(echeance);
+
+                decimal resteAPayer =
+                    GetResteAPayer(echeance);
+
+
+                <article class="document-card">
+
+                    <div class="document-icon notice-icon">
+                        PDF
+                    </div>
+
+
+                    <div class="document-info">
+
+                        <h2>
+                            Avis d'échéance
+                        </h2>
+
+                        <div class="document-subtitle">
+                            @GetMois(echeance.DateEcheance)
+                        </div>
+
+
+                        <div class="document-details">
+
+                            <span>
+                                @echeance.Locataire.NomComplet
+                            </span>
+
+                            <span>
+                                @echeance.Bien.TypeBien -
+                                @echeance.Bien.Ville
+                            </span>
+
+                            <span>
+                                Total :
+                                @echeance.Total.ToString("N0") €
+                            </span>
+
+                            @if (montantPaye > 0) {
+
+                                <span>
+                                    Déjà réglé :
+                                    @montantPaye.ToString("N0") €
+                                </span>
+                            }
+
+                            <span class="remaining-amount">
+                                Reste :
+                                @resteAPayer.ToString("N0") €
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="document-actions">
+
+                        <span class="pending">
+                            À régler
+                        </span>
+
+                        <button class="generate-button"
+                                @onclick="() => GenererAvisEcheance(echeance.Id)">
+                            Générer l'avis
+                        </button>
+
+                    </div>
+
+                </article>
+            }
+
+        </div>
+    }
+
+</div>
+
+
+@code {
+
+    private List<Echeance> EcheancesPayees = [];
+    private List<Echeance> EcheancesAvecSolde = [];
+    
+    private List<Paiement> Paiements = [];
+
+
+    protected override async Task OnInitializedAsync() {
+
+        EcheancesPayees =
+            await DemoData.GetEcheancesPayeesAsync();
+
+        List<Echeance> toutesEcheances =
+            await DemoData.GetEcheancesAsync();
+
+        Paiements =
+            await DemoData.GetPaiementsAsync();
+
+        EcheancesAvecSolde =
+            toutesEcheances
+                .Where(echeance =>
+                    GetResteAPayer(echeance) > 0)
+                .OrderByDescending(
+                    echeance =>
+                        echeance.DateEcheance)
+                .ToList();
+    }
+
+    private static string GetMois(
+        DateTime date) {
+
+        CultureInfo culture =
+            CultureInfo.GetCultureInfo("fr-FR");
+
+        string texte =
+            date.ToString(
+                "MMMM yyyy",
+                culture);
+
+        return char.ToUpper(texte[0]) +
+               texte[1..];
+    }
+
+
+    private void GenererQuittance(
+        int echeanceId) {
+
+        Navigation.NavigateTo(
+            $"/api/documents/quittance/{echeanceId}",
+            forceLoad: true);
+    }
+
+
+    private void OuvrirProfilBailleur() {
+
+        Navigation.NavigateTo(
+            "/profil-bailleur");
+    }
+
+    private decimal GetMontantPaye(
+    Echeance echeance) {
+
+        return Paiements
+            .Where(paiement =>
+                paiement.EcheanceId == echeance.Id)
+            .Sum(paiement =>
+                paiement.Montant);
+    }
+
+
+    private decimal GetResteAPayer(
+        Echeance echeance) {
+
+        return Math.Max(
+            0m,
+            echeance.Total -
+            GetMontantPaye(echeance));
+    }
+
+    private void GenererAvisEcheance(
+    int echeanceId) {
+
+        Navigation.NavigateTo(
+            $"/api/documents/avis-echeance/{echeanceId}",
+            forceLoad: true);
+    }
+}

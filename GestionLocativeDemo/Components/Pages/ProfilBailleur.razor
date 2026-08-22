@@ -1,0 +1,141 @@
+@page "/profil-bailleur"
+
+@using GestionLocativeDemo.Models
+@using GestionLocativeDemo.Services
+
+@inject DemoDataService DemoData
+@inject NavigationManager Navigation
+
+<PageTitle>Profil bailleur - Gestion Locative</PageTitle>
+
+<div class="profil-page">
+
+    <div class="page-header">
+
+        <div>
+            <h1>Profil bailleur</h1>
+
+            <p>
+                Ces informations seront utilisées
+                dans vos documents locatifs.
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="form-card">
+
+        <div class="form-grid">
+
+            <div class="form-field">
+                <label>Prénom</label>
+
+                <input type="text"
+                       @bind="_bailleur.Prenom" />
+            </div>
+
+            <div class="form-field">
+                <label>Nom</label>
+
+                <input type="text"
+                       @bind="_bailleur.Nom" />
+            </div>
+
+            <div class="form-field full-width">
+                <label>Adresse</label>
+
+                <input type="text"
+                       @bind="_bailleur.Adresse" />
+            </div>
+
+            <div class="form-field">
+                <label>Code postal</label>
+
+                <input type="text"
+                       @bind="_bailleur.CodePostal" />
+            </div>
+
+            <div class="form-field">
+                <label>Ville</label>
+
+                <input type="text"
+                       @bind="_bailleur.Ville" />
+            </div>
+
+            <div class="form-field">
+                <label>Email</label>
+
+                <input type="email"
+                       @bind="_bailleur.Email" />
+            </div>
+
+            <div class="form-field">
+                <label>Téléphone</label>
+
+                <input type="text"
+                       @bind="_bailleur.Telephone" />
+            </div>
+
+        </div>
+
+
+        @if (_enregistre) {
+
+            <div class="success-message">
+                Profil enregistré.
+            </div>
+        }
+
+
+        <div class="form-actions">
+
+            <button class="cancel-button"
+                    @onclick="Cancel">
+                Retour
+            </button>
+
+            <button class="save-button"
+                    @onclick="Save">
+                Enregistrer
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@code {
+
+    private Bailleur _bailleur = new();
+
+    private bool _enregistre;
+
+
+    protected override async Task OnInitializedAsync() {
+
+        Bailleur? bailleurExistant =
+            await DemoData.GetBailleurAsync();
+
+        if (bailleurExistant != null)
+            _bailleur = bailleurExistant;
+    }
+
+
+    private async Task Save() {
+
+        await DemoData.SaveBailleurAsync(
+            _bailleur);
+
+        _enregistre = true;
+    }
+
+
+    private void Cancel() {
+
+        Navigation.NavigateTo(
+            "/documents");
+    }
+}

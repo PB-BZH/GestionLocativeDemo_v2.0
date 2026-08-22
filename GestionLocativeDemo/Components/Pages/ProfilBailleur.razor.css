@@ -1,0 +1,75 @@
+.profil-page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 30px;
+}
+
+.page-header p {
+    margin-top: 6px;
+    color: #6b7280;
+}
+
+.form-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-field input {
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.cancel-button,
+.save-button {
+    padding: 10px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.cancel-button {
+    background: white;
+    border: 1px solid #d1d5db;
+}
+
+.save-button {
+    border: none;
+    background: #2563eb;
+    color: white;
+}
+
+.success-message {
+    margin-top: 20px;
+    color: #166534;
+    font-weight: 600;
+}

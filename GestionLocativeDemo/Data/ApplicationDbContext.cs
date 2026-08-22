@@ -13,6 +13,7 @@ public class ApplicationDbContext(
   public DbSet<Echeance> Echeances { get; set; }
   public DbSet<Bail> Baux { get; set; }
   public DbSet<Paiement> Paiements { get; set; }
+  public DbSet<Bailleur> Bailleurs { get; set; }
 
   protected override void OnModelCreating(
     ModelBuilder builder) {
@@ -20,11 +21,11 @@ public class ApplicationDbContext(
     base.OnModelCreating(builder);
 
     builder.Entity<Bien>()
-    .ToTable("Properties");
+        .ToTable("Properties");
 
     builder.Entity<Bien>()
-    .Property(bien => bien.TypeBien)
-    .HasColumnName("Type");
+        .Property(bien => bien.TypeBien)
+        .HasColumnName("Type");
 
     builder.Entity<Bien>()
         .Property(bien => bien.Etage)
@@ -59,11 +60,11 @@ public class ApplicationDbContext(
         .HasColumnName("IsRented");
 
     builder.Entity<Locataire>()
-    .ToTable("Tenants");
+        .ToTable("Tenants");
 
     builder.Entity<Locataire>()
-    .Property(locataire => locataire.Prenom)
-    .HasColumnName("FirstName");
+        .Property(locataire => locataire.Prenom)
+        .HasColumnName("FirstName");
 
     builder.Entity<Locataire>()
         .Property(locataire => locataire.Nom)
@@ -71,8 +72,8 @@ public class ApplicationDbContext(
 
 
     builder.Entity<Locataire>()
-    .Property(locataire => locataire.Adresse)
-    .HasColumnName("Address");
+        .Property(locataire => locataire.Adresse)
+        .HasColumnName("Address");
 
     builder.Entity<Locataire>()
         .Property(locataire => locataire.Telephone)
@@ -114,10 +115,10 @@ public class ApplicationDbContext(
         .OnDelete(DeleteBehavior.Restrict);
 
     builder.Entity<Bail>()
-    .HasOne(bail => bail.Bien)
-    .WithMany()
-    .HasForeignKey(bail => bail.BienId)
-    .OnDelete(DeleteBehavior.Restrict);
+        .HasOne(bail => bail.Bien)
+        .WithMany()
+        .HasForeignKey(bail => bail.BienId)
+        .OnDelete(DeleteBehavior.Restrict);
 
     builder.Entity<Bail>()
         .HasOne(bail => bail.Locataire)
@@ -126,10 +127,10 @@ public class ApplicationDbContext(
         .OnDelete(DeleteBehavior.Restrict);
 
     builder.Entity<Echeance>()
-    .HasOne(echeance => echeance.Bail)
-    .WithMany()
-    .HasForeignKey(echeance => echeance.BailId)
-    .OnDelete(DeleteBehavior.Restrict);
+        .HasOne(echeance => echeance.Bail)
+        .WithMany()
+        .HasForeignKey(echeance => echeance.BailId)
+        .OnDelete(DeleteBehavior.Restrict);
 
     builder.Entity<Paiement>()
         .HasOne(paiement => paiement.Echeance)
